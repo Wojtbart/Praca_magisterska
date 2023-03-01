@@ -1,1 +1,1 @@
-"# Praca_magisterska" 
+# Praca_magisterska
