@@ -45,4 +45,4 @@ var nodemailer = require('nodemailer');
     });
 
 }
-// mailService();
+mailService();

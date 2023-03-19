@@ -1,5 +1,6 @@
 const ini = require('ini');
-const config = ini.parse(fs.readFileSync('../../config.ini','utf-8'));
+const fs = require('fs');
+const config = ini.parse(fs.readFileSync('../config.ini','utf-8'));
 const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -36,15 +37,15 @@ client.on("messageCreate", function(message) {
 // });
 
 
-app.post('/sms', async (req, res) => {
-  if(req.body.From != config.tokens.PERSONAL_NUMBER) return;
-  const channel = client.channels.cache.get(config.discord.friendsChannelId);
-  channel.send(req.body.Body);
+// app.post('/sms', async (req, res) => {
+//   if(req.body.From != config.tokens.PERSONAL_NUMBER) return;
+//   const channel = client.channels.cache.get(config.discord.friendsChannelId);
+//   channel.send(req.body.Body);
 
-  res.status(201).send({
-    message: 'Udalo sie'
-  })
-});
+//   res.status(201).send({
+//     message: 'Udalo sie'
+//   })
+// });
 // client.on('ready', () => {
 //   console.log(`Logged in as ${client.user.tag}!`);
 // });
@@ -61,23 +62,27 @@ app.post('/sms', async (req, res) => {
 
 const userDatabase = [];
 
-app.post('/testowa', (req, res) => {
-  const { email, password } = req.body;
-  const user = {
-    email,
-    password
-  };
 
-  userDatabase.push(user);
 
-  const welcomeMessage = 'Wiadomośc testowa Wojciecha';
 
-  sendSMS(welcomeMessage);
 
-  res.status(201).send({
-    message: 'Account created successfully, kindly check your phone to activate your account!',
-    data: user
-  })
+const  sendSmToDiscord= (req,res)=>{
+  try{
+    const welcomeMessage = 'Wiadomośc testowa Wojciecha';
+
+    sendSMS(welcomeMessage);
   
-});
+    res.status(201).send({
+      message: 'Account created successfully, kindly check your phone to activate your account!'
+      //data: user
+    })
+  }
+  catch(err){
+      res.status(500).send({
+          message: err.message || "Wystąpił bład w trakcie wykonywanie zapytania"
+      });
+  } 
+}
+
 client.login(config.tokens.BOT_TOKEN);
+module.exports={sendSmToDiscord};

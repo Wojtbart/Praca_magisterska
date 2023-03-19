@@ -2,7 +2,7 @@ const express=require('express');
 const process = require("process");
 const path = require('path');
 const cors = require('cors');
-
+const discord = require('./servicelayer/discord');
 const PORT=process.env.PORT || 9005;
 
 const app=express();
@@ -12,7 +12,7 @@ app.use(cors())
 app.set('view engine', 'pug')
 app.set("views", path.join(__dirname, "views"));
 
-app.use(require('./routes'));
+// app.use(require('./routes'));
 
 app.get('/', (req, res) => {
   res.render('index',{title:'Projekt z mikroserwisami'});
@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 app.get('*', (req, res) => {
   res.status(404).send('Nie znaleziono')
 })
-
+const emailKtóryWyłączyć=1;
 //pozostałę endpointy
 app.post(`/stopSendingEmail/:userId?emailId=${emailKtóryWyłączyć}`, (req, res) => {
 
@@ -47,6 +47,10 @@ app.post('/addEmailTemplate', (req, res) => {
     data: user
   })
 });
+
+
+app.post('/testowa', discord.sendSmToDiscord);
+
 
 // error handler
 app.use(function(err, req, res, next) {
