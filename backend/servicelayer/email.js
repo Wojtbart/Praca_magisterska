@@ -1,29 +1,20 @@
-var nodemailer = require('nodemailer');
+const ini = require('ini');
+const fs = require('fs');
+const config = ini.parse(fs.readFileSync('../config.ini','utf-8'));
+const nodemailer = require('nodemailer');
   
-  function mailService(){
-    // let transporter = nodemailer.createTransport({
-    //   host: "smtp.ethereal.email",
-    //   port: 587,
-    //   secure: false, // true for 465, false for other ports
-    //   auth: {
-    //     user: testAccount.user, // generated ethereal user
-    //     pass: testAccount.pass, // generated ethereal password
-    //   },
-    // });
+  function sendMailService(){
 
-  //korzystam z gmaila
-  let mailTransporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "shipgamesender@gmail.com",
-// use generated app password for gmail
-     // pass: "okretyOkrety2",
-      pass: "xksigqjsowczylik"      
-    },
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
+    let mailTransporter = nodemailer.createTransport({
+      service: "gmail", //korzystam z gmaila
+      auth: {
+        user: config.email.mailSender,
+        pass: config.email.mailSenderPassword     
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
     // send mail with defined transport object
     let info =  {
@@ -31,8 +22,7 @@ var nodemailer = require('nodemailer');
       from: '"Wojtek Kox 👻"shipgamesender@gmail.com', // sender address
       to: "wojtektokoxik@gmail.com", // list of receivers
       subject: "Mail Testowy ✔", // Subject line
-      text: "Node.js Cron Job Email Demo Test from Wojtek", // plain text body
-     // html: "<b>Hello world?</b>", // html body
+      text: "Node.js Cron Job Email Demo Test from Wojtek", // plain text body // html: "<b>Hello world?</b>", // html body
     };
 
     mailTransporter.sendMail(info, function (err, data) {
@@ -43,6 +33,19 @@ var nodemailer = require('nodemailer');
         console.log("Email wysłany prawidłowo: "  + data.response);
       }
     });
-
 }
-mailService();
+const  mailService= (req,res)=>{
+  try{
+    sendMailService();
+
+    res.status(201).send({
+      message: 'Udało się wysłać maila!'
+    })
+  }
+  catch(err){
+      res.status(500).send({
+          message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
+      });
+  } 
+}
+module.exports={mailService};

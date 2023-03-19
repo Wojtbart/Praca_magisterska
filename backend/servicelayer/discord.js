@@ -37,18 +37,7 @@ client.on("messageCreate", function(message) {
 // });
 
 
-// app.post('/sms', async (req, res) => {
-//   if(req.body.From != config.tokens.PERSONAL_NUMBER) return;
-//   const channel = client.channels.cache.get(config.discord.friendsChannelId);
-//   channel.send(req.body.Body);
 
-//   res.status(201).send({
-//     message: 'Udalo sie'
-//   })
-// });
-// client.on('ready', () => {
-//   console.log(`Logged in as ${client.user.tag}!`);
-// });
 
 // client.on('interactionCreate', async interaction => {
 //   if (!interaction.isChatInputCommand()) return;
@@ -63,10 +52,35 @@ client.on("messageCreate", function(message) {
 const userDatabase = [];
 
 
+const sendSmssToDiscord= async (req, res) => {
+  if(req.body.From != config.tokens.PERSONAL_NUMBER) return;
+  const channel = client.channels.cache.get(config.discord.friendsChannelId);
+  channel.send(req.body.Body);
+}
+client.on('ready', () => {
+  console.log(`Zalogowany jako ${client.user.tag}!`);
+});
+
+
+const  sendSmstoDiscordService= (req,res)=>{
+  try{
+    sendSmssToDiscord(req, res);
+  
+    res.status(201).send({
+      message: 'Udalo się wyslać powiadomienie do Discorda'
+      //data: user
+    })
+  }
+  catch(err){
+      res.status(500).send({
+          message: err.message || "Wystąpił bład w trakcie wykonywanie zapytania"
+      });
+  } 
+}
 
 
 
-const  sendSmToDiscord= (req,res)=>{
+const  sendSmstoPhone= (req,res)=>{
   try{
     const welcomeMessage = 'Wiadomośc testowa Wojciecha';
 
@@ -85,4 +99,4 @@ const  sendSmToDiscord= (req,res)=>{
 }
 
 client.login(config.tokens.BOT_TOKEN);
-module.exports={sendSmToDiscord};
+module.exports={sendSmstoPhone,sendSmstoDiscordService};
