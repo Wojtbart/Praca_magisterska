@@ -131,6 +131,7 @@ dist
 
 # config
 config.ini
+*.ini
 
 # misc
 .DS_Store
