@@ -3,7 +3,7 @@ const process = require("process");
 const path = require('path');
 const cors = require('cors');
 const discord = require('./servicelayer/discord');
-const email = require('./servicelayer/email');
+const email = require('./servicelayer/email_service');
 const PORT=process.env.PORT || 9005;
 
 const app=express();
@@ -51,7 +51,6 @@ app.post('/addEmailTemplate', (req, res) => {
 
 
 app.post('/sms', discord.sendSmstoPhone);
-
 app.post('/email', email.mailService);
 app.post('/discord',discord.sendSmstoDiscordService);
 

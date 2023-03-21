@@ -28,14 +28,6 @@ client.on("messageCreate", function(message) {
        sendSMS(sms);
    }
 });
-// client.on("guildMemberAdd", function(member) {
-//   sendSMS(`${member.user.username} has joined the server!`)
-// });
-
-// client.on("guildMemberRemove", function(member) {
-//   sendSMS(`${member.user.username} has left the server!`)
-// });
-
 
 
 
