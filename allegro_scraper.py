@@ -157,7 +157,57 @@ def find_offers(token,phrase,limit):
 
 def main():
     access_token = get_access_token()
-    find_offers( access_token, 'iphone', 100)
+    find_offers( access_token, 'zetor 7245', 100)
 
 if __name__ == "__main__":
     main()
+
+# import numpy as np
+import matplotlib.pyplot as plt
+# #make this example reproducible.
+# # np.random.seed(1)
+
+# #create numpy array with 1000 values that follow normal dist with mean=10 and sd=2
+# # data = np.array([13.24869073,  8.77648717,  8.9436565 ,  7.85406276, 11.73081526])
+# data = np.random.normal(size=1000, loc=10, scale=2)
+
+
+# #create histogram
+# plt.hist(data, color='lightgreen', ec='black', bins=15)
+# plt.savefig("mygraph.png")
+
+# import pandas as pd
+# df = pd.read_csv('rozklad_dla_9.txt')
+# data = pd.read_csv('rozklad_dla_9.txt',sep='\s+',header=None)
+# data = pd.DataFrame(data)
+
+# x1 = df.loc[df.cut=='Ideal', 'depth']
+# x2 = df.loc[df.cut=='Fair', 'depth']
+# x3 = df.loc[df.cut=='Good', 'depth']
+
+# kwargs = dict(alpha=0.5, bins=100)
+
+# plt.hist(x1, **kwargs, color='g', label='Ideal')
+# plt.hist(x2, **kwargs, color='b', label='Fair')
+# plt.hist(x3, **kwargs, color='r', label='Good')
+# plt.gca().set(title='Frequency Histogram of Diamond Depths', ylabel='Frequency')
+# plt.xlim(50,75)
+# plt.legend();
+
+# import matplotlib.pyplot as plt
+# x = data[0]
+# y = data[1]
+# z= data[2]
+
+# plt.plot(x, z,'b--')
+# plt.plot(x, y,'r--')
+
+# # plt.show()
+# plt.savefig("mygraph.png")
+
+# # a = data[0]
+# # b = data[2]
+# # plt.plot(x, y,'r--')
+# # # plt.show()
+# # plt.savefig("mygraph2.png")
+

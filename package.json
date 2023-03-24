@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "amqplib": "^0.10.3",
     "mysql2": "^3.2.0",
     "sequelize": "^6.29.3"
   }
