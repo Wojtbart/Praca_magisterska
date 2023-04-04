@@ -4,7 +4,12 @@ const path = require('path');
 const cors = require('cors');
 const discord = require('./servicelayer/discord');
 const email = require('./servicelayer/email_service');
+const {Sequelize, DataTypes} = require("sequelize");
+// const ini = require('ini');
+// const fs = require('fs');
+// const config = ini.parse(fs.readFileSync('./config.ini','utf-8'));
 const PORT=process.env.PORT || 9005;
+const users=require('./servicelayer/users');
 
 const app=express();
 app.use(express.json());
@@ -19,6 +24,52 @@ app.get('/', (req, res) => {
   res.render('index',{title:'Projekt z mikroserwisami'});
 });
 
+// app.post('/register-user', (req, res) => {
+// 	let {name,lastName,email,password,confirmPassword,phone} =  req.body;
+// 	 User.create({
+// 	  name: name,
+// 	  lastName:lastName,
+// 	  email:email,
+// 	  password:password,
+// 	  phone:phone
+// 	}).then(function(item){
+//   res.json({
+//     "Message" : "Created item.",
+//     "Item" : item
+//   });
+// }).catch(function (err) {
+//   // handle error;
+// });
+// 	if (error) throw error;
+// 	  res.status(201).send({
+// 		message: 'Poprawnie dodano użytkownika!',
+// 		//data: user
+// 	  })
+// });
+
+
+
+// const sequelize = new Sequelize(
+//     config.mysql.database,
+//     config.mysql.user,
+//     config.mysql.password,
+//     {
+//         host: config.mysql.host,
+//         dialect: 'mysql'
+//     }
+// );
+
+//const allOLXArticles= async () =>{
+//    var OLXArticles={};
+
+//    try {
+//        OLXArticles= await OLX_articles_models.findAll(); 
+//        console.log(OLXArticles.every(user => user instanceof OLX_articles_models)); // true
+//    } catch (err) {
+//       console.log(err)    
+//    }
+ //   return OLXArticles;
+//};
 
 app.get('*', (req, res) => {
   res.status(404).send('Nie znaleziono')
@@ -50,9 +101,19 @@ app.post('/addEmailTemplate', (req, res) => {
 });
 
 
+
+
 app.post('/sms', discord.sendSmstoPhone);
 app.post('/email', email.mailService);
 app.post('/discord',discord.sendSmstoDiscordService);
+app.post('/registerUser', users.registerUser);
+app.post('/getUser', users.getUser);
+
+app.use('/login', (req, res) => {
+  res.send({
+    token: 'test1234'
+  });
+});
 
 
 // error handler
