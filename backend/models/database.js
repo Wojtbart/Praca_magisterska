@@ -1,35 +1,23 @@
-const mysql=require('mysql');
+const ini = require('ini');
+const fs = require('fs');
+const config = ini.parse(fs.readFileSync('../config.ini','utf-8'));
 const Sequelize = require("sequelize");
-const config = ini.parse(fs.readFileSync('../../config.ini','utf-8'));
-
-// let connection = mysql.createConnection({
-//     host: config.mysql.host,
-//     user: config.mysql.user,
-//     password: config.password,
-//     database: config.mysql.database
-// });
-
-// connection.connect(function(err) {
-//     if (err) {
-//       return console.error('Błąd: ' + err.message);
-//     }
-//     console.log('Połączono z bazą danych MySQL!!!');
-// });
-
-
 
 const sequelize = new Sequelize(
- config.mysql.database,
- config.mysql.user,
- config.mysql.password,
+  config.mysql.database,
+  config.mysql.user,
+  config.mysql.password,
   {
     host: config.mysql.host,
-    dialect: 'mysql'
+    dialect: config.mysql.dialect,
+    operationsAliases: false,
   }
 );
-
+ 
 sequelize.authenticate().then(() => {
-  console.log('Ustanowiono połączenie do bazy.');
+  console.log('Nawiązano pomyślnie  połączenie do bazy MySQL.');
 }).catch((error) => {
   console.error('Nie można połączyć się z bazą danych: ', error);
 });
+
+module.exports={sequelize};

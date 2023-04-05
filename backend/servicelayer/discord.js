@@ -79,13 +79,13 @@ const  sendSmstoPhone= (req,res)=>{
     sendSMS(welcomeMessage);
   
     res.status(201).send({
-      message: 'Account created successfully, kindly check your phone to activate your account!'
+      message: 'Udało się wysłać sms poprawnie!'
       //data: user
     })
   }
   catch(err){
       res.status(500).send({
-          message: err.message || "Wystąpił bład w trakcie wykonywanie zapytania"
+          message: err.message || "Wystąpił bład w trakcie wykonywania zapytania"
       });
   } 
 }

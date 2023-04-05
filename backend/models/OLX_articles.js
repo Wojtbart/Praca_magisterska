@@ -1,25 +1,7 @@
 const {Sequelize, DataTypes} = require("sequelize");
-const ini = require('ini');
-const fs = require('fs');
-const config = ini.parse(fs.readFileSync('../../config.ini','utf-8'));
+const sequelize =require('./database').sequelize
 
-const sequelize = new Sequelize(
-    config.mysql.database,
-    config.mysql.user,
-    config.mysql.password,
-    {
-    host: config.mysql.host,
-    dialect: 'mysql'
-    }
-);
-
-sequelize.authenticate().then(() => {
-    console.log('Ustanowiono połączenie do bazy.');
-}).catch((error) => {
-    console.error('Nie można połączyć się z bazą danych: ', error);
-});
-
-const OLX_articles_models = sequelize.define("olx_articles", {
+const OLX_articles_models = sequelize.define("artykuly_olx", { //table olx_articles
     Tytul: {
         type: DataTypes.STRING,
         allowNull: false
@@ -51,10 +33,14 @@ const OLX_articles_models = sequelize.define("olx_articles", {
 },{
     tableName: 'artykuly_olx',
     timestamps: false
-  });
+});
+
+sequelize.sync();
+
 // sequelize.sync().then(() => {
-//     console.log('Definiujemy tabelę artykuly_olx!');
-//  }).catch((error) => {
-//     console.error('Unable to create table : ', error);
-//  });
- module.exports=OLX_articles_models;
+//     console.log('Stworzono tabele artykuly_olx!');
+// }).catch((error) => {
+//     console.error('Nie można stworzyć tabeli : ', error);
+// });
+
+module.exports=OLX_articles_models;

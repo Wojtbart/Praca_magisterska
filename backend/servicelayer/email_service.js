@@ -19,10 +19,10 @@ const nodemailer = require('nodemailer');
     // send mail with defined transport object
     let info =  {
       // from: '"Fred Foo 👻"shipgamesender@gmail.com', // sender address
-      from: '"Wojtek Kox 👻"shipgamesender@gmail.com', // sender address
+      from: '"Wojtek TEST 👻"shipgamesender@gmail.com', // sender address
       to: "wojtektokoxik@gmail.com", // list of receivers
       subject: "Mail Testowy ✔", // Subject line
-      text: "Node.js Cron Job Email Demo Test from Wojtek", // plain text body // html: "<b>Hello world?</b>", // html body
+      text: "Test mail Wojtek", // plain text body // html: "<b>Hello world?</b>", // html body
     };
 
     mailTransporter.sendMail(info, function (err, data) {
@@ -48,4 +48,20 @@ const  mailService= (req,res)=>{
       });
   } 
 }
-module.exports={mailService};
+
+const  addEmailTemplate= (req,res)=>{
+  // try{
+  //   sendMailService();
+
+  //   res.status(201).send({
+  //     message: 'Udało się wysłać maila!'
+  //   })
+  // }
+  // catch(err){
+  //     res.status(500).send({
+  //         message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
+  //     });
+  // } 
+}
+
+module.exports={mailService, addEmailTemplate};
