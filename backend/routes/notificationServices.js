@@ -1,13 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-const discord = require('../servicelayer/discord');
-const email = require('../servicelayer/email_service');
+const email=require('../controllers/emailController');
 
-router.post('/addEmailTemplate',email.addEmailTemplate);
-router.post('/sms', discord.sendSmstoPhone);
-router.post('/email', email.mailService);
-router.post('/discord',discord.sendSmstoDiscordService);
-
+router.post('/email', email.sendMailController);
+// router.post('/addEmailTemplate',email.addEmailTemplate);
+// router.post('/discord',discord.sendSmstoDiscordService);
+// router.post('/sms', discord.sendSmstoPhone);
 
 module.exports = router;
