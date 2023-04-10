@@ -4,7 +4,7 @@ const registerUser = async (req,res)=>{
     let usersList={};
 
     try {
-        let {name,surname,email,password,phone,login} =  req.body;
+        const {name,surname,email,password,phone,login} =  req.body;
 
         usersList = await Users.create({
             name: name,

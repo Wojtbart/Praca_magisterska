@@ -23,11 +23,31 @@ app.set("views", path.join(__dirname, "views"));
 // app.get('/', (req, res) => {
 //   res.render('index',{title:'Projekt z mikroserwisami'});
 // });
-
+const usersList = [];
 app.use('/login', (req, res) => {
-  res.send({
-    token: 'test_token'
-  });
+  // res.send({
+  //   token: 'test_token'
+  // });
+
+  const { login, password } = req.body;
+    //👇🏻 Checks for user(s) with the same email and password
+    let result = usersList.filter(
+        (user) => user.login === login && user.password === password
+    );
+
+    //👇🏻 If no user exists, it returns an error message
+    if (result.length !== 1) {
+        return res.json({
+            error_message: "Incorrect credentials",
+        });
+    }
+    //👇🏻 Returns the username of the user after a successful login
+    res.json({
+        message: "Login successfully",
+        data: {
+            username: result[0].username,
+        },
+    });
 });
 
 app.use('/', notificationServices);

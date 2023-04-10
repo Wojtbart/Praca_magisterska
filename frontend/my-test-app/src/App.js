@@ -12,22 +12,20 @@ import useToken from './useToken';
 
 const App = () => {
 
-    const { token, setToken } = useToken();
+    // const { token, setToken } = useToken();
 
-    if(!token) {
-      return <>
-      <Header></Header>
-      <LoginForm setToken={setToken} /></>
-    }
+    // if(!token) {
+    //   return <>
+    //   <Header></Header>
+    //   <LoginForm setToken={setToken} /></>
+    // }
 
 
     return (
-      
         <BrowserRouter>
-        <Header/>
+          {/* <Header/> */}
           <Routes>
-
-            <Route path="/" element={<Home/>} />
+            <Route path="/" element={<LoginForm/>} />
             {/* <Route path="/login" element={<LoginForm setToken={setToken}/>} /> */}
             <Route  path="/register" element={<RegistrationForm/>} />
             <Route path="/dashboard" element={<Dashboard />} />

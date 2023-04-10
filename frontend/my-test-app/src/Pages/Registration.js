@@ -11,11 +11,12 @@ function RegistrationForm() {
 	const [password, setPassword] = useState(null);
 	const [confirmPassword, setConfirmPassword] = useState(null);
 	const [phone, setPhone] = useState(null);
+	const [login, setLogin] = useState(null);
 
-	const navigateToContacts = () => {
-		// 👇️ navigate to /contacts
-		navigate('/login');
-	  };
+	// const navigateToContacts = () => {
+	// 	// 👇️ navigate to /contacts
+	// 	navigate('/login');
+	//   };
 
 	const handleInputChange = (e) => {
 		const {id , value} = e.target;
@@ -37,32 +38,49 @@ function RegistrationForm() {
 		if(id === "phone"){
 			setPhone(value);
 		}
+		if(id === "login"){
+			setLogin(value);
+		}
 	}
 
 	const handleSubmit  = (e) => {
-		console.log(name,surname,email,password,confirmPassword,phone);
+
+		e.preventDefault();
+
+		console.log(name,surname,email,password,confirmPassword,phone,login);
 		let obj = {
             name : name,
             surname:surname,
             email:email,
             password:password,
             phone:phone,
+			login: login
+
         }  
 		console.log('obj', obj);
+
 		fetch('http://localhost:9005/registerUser', {
 			method: 'POST',
 			headers:{
                 'Content-Type': 'application/json'
             },
 			body: JSON.stringify(obj)
-		}).then(function(response) {
-			console.log(response)
-			return response.json();
-		});
+		})
+		.then((res) => res.json())
+		.then((data) => {
+            if (data.error_message) {
+                alert(data.error_message);
+            } else {
+                // alert(data.message);
+				alert("Account created successfully!");
+                navigate("/");
+            }
+        })
+        .catch((err) => console.error(err));
  
-   		e.preventDefault();
+   		
 	}
-
+	const gotoLoginPage = () => navigate("/");
 
   return (
 	<>
@@ -70,6 +88,19 @@ function RegistrationForm() {
 		<form onSubmit={handleSubmit} className="form">
 			<h1 className='formTitle'>REJESTRACJA</h1>
 		<div className="form-body">
+				<div className="login">
+					<label className="form__label" htmlFor="login">Login</label>
+					<input
+						type="text"
+						className="form__input"
+						id="login"
+						placeholder="login"
+						required
+						value={login}
+						onChange={(event) => handleInputChange(event)}
+					/>
+				</div>
+
 				<div className="username">
 				<label className="form__label" htmlFor="firstName">Imię</label>
 				<input
@@ -142,10 +173,16 @@ function RegistrationForm() {
 					<button type="submit"  className="btn">Zarejestruj</button>
 				</div>
 		</div>
+		<p>
+					Already have an account?{" "}
+					<span className='link' onClick={gotoLoginPage}>
+						Login
+					</span>
+				</p>
 		</form>
-		<div >
+		{/* <div >
 			<button onClick={navigateToContacts}>Zaloguj się</button>
-		</div>
+		</div> */}
 	</>
   );
 }

@@ -42,36 +42,5 @@ const oneOLXArticle=  async () =>{
         console.log(movie instanceof OLX_articles_models); // true
         console.log(movie.Tytul); // 'My Title'
       }
-    // .then(res => {
-    //         console.log(res);
-    //     }).catch((error) => {
-    //         console.error('Failed to retrieve data : ', error);
-    //     });
-    //console.log(movie)
-    //return movie;
-};
-// allOLXArticles();
+
 oneOLXArticle();
-// sequelize.sync().then(() => {
-   
-//    OLX_articles_models.findAll().then(res => {
-//     console.log(res);
-// }).catch((error) => {
-//     console.error('Failed to retrieve data : ', error);
-// });
-
-// }).catch((error) => {
-//    console.error('Unable to create table : ', error);
-// });
-
-// sequelize.sync().then(() => {
-   
-//     OLX_articles_models.findAll().then(res => {
-//      console.log(res);
-//  }).catch((error) => {
-//      console.error('Failed to retrieve data : ', error);
-//  });
- 
-//  }).catch((error) => {
-//     console.error('Unable to create table : ', error);
-//  });

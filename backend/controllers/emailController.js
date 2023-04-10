@@ -12,5 +12,4 @@ const sendMailController= async (req,res)=>{
     } 
 }
 
-
 module.exports={sendMailController};
