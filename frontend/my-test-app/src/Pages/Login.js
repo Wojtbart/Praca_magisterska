@@ -1,21 +1,15 @@
 import React, {useState} from 'react';
 import { useNavigate } from "react-router-dom";
-// import PropTypes from 'prop-types';
 import '../style.css'
 
-
-
-
-//{ setToken } 
 function LoginForm( ) {
     
-	const [login, setLogin] = useState();
-    const [password, setPassword] = useState();
     const navigate = useNavigate();
-
+	const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
+    
     function loginUser() {
-        
-        // console.log(credentials)
+
         fetch('http://localhost:9005/login', {
             method: 'POST',
             headers: {
@@ -27,62 +21,34 @@ function LoginForm( ) {
 			}),
         })
         .then((res) => res.json())
-        .then((data) => {
-            if (data.error_message) {
-                alert(data.error_message);
-            } else {
-                //👇🏻 Logs the username to the console
-                console.log(data.data);
-                //👇🏻 save the username to the local storage
-                localStorage.setItem("login", data.data.login);
-                //👇🏻 Navigates to the 2FA route
-                navigate("/dashboard");
+		.then((data) => {
+			if(data.message==='Nie udało się zalogować') alert(data.error);
+            else {
+				alert("Udało się poprawnie zalogować!");
+                localStorage.setItem("login", data.login);
+                localStorage.setItem("phone", data.phone);
+                localStorage.setItem("email", data.email);
+                navigate("/dashboard")
             }
         })
         .catch((err) => console.error(err));
     }
 
-    
-
-    // const [authenticated, setauthenticated] = useState(localStorage.getItem("authenticated"));
-    
-    // const users = [{ username: "Jane", password: "testpassword" }];
-
     const handleSubmit = async (e) => {
-        // console.log(e.target.value)
-
         e.preventDefault()
-        // console.log(e)
-        // const account = users.find((user) => user.username === username);
-        // console.log(account)
-
-        // if (account && account.password === password) {
-        //     setauthenticated(true)
-        //     localStorage.setItem("authenticated", true);
-        //     console.log("git")
-        //     console.log(setauthenticated)
-        //     console.log("git2")
-        //     navigate("/dashboard");
-        // }
         loginUser();
-        console.log({ login, password });
-        // const token = await loginUser({
-        //     login,
-        //     password
-        // });
-
-        // setToken(token);
-        // navigate("/dashboard");
     }
+
     const gotoSignUpPage = () => navigate("/register");
 
     return(
-        <div>    
+        <>    
             <form onSubmit={handleSubmit} className="form">
                 <h2 className='formTitle'>LOGOWANIE</h2>
-                {/* <div className='form-body'> */}
-                    {/* <div> */}
-                        <label className="form__label" htmlFor='login'>Login
+                <div className="form-body">
+
+                    <div className="login">
+                        <label className="form__label" htmlFor='login'>Login</label>
                         <input
                             type="text"
                             name="Login"
@@ -90,13 +56,12 @@ function LoginForm( ) {
                             value={login}
                             required
                             className="form__input"
-                            // value={username}
                             onChange={(e) => setLogin(e.target.value)}
                         />
-                        </label>
-                    {/* </div> */}
-                    {/* <div> */}
-                        <label className="form__label" htmlFor='password'>Password
+                    </div>
+
+                    <div className="password">
+                        <label className="form__label" htmlFor='password'>Hasło</label>
                         <input
                             type="password"
                             name="Hasło"
@@ -107,27 +72,23 @@ function LoginForm( ) {
                             className="form__input"
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        </label>
-                    {/* </div> */}
-                    <div className="footer">
-					    <button type="submit"  className="btn">Zaloguj się</button>
-                        <p>
-                            Nie masz konta?{" "}
-                            <span className='link' onClick={gotoSignUpPage}>
-                                Zarejestruj się
-                            </span>
-                        </p>
-				    </div>
-                {/* </div> */}
+                    </div>
+                </div>
+
+                <div className="footer">
+                    <button type="submit"  className="btn">Zaloguj się</button>
+                </div>
+                
+                <p className='link'>
+                    Nie masz konta?{" "}
+                    <button className='linkBtn' onClick={gotoSignUpPage}>
+                        Zarejestruj się
+                    </button>
+                </p>
             </form>
-            </div>
+        </>
     );
 }
-
-
-// LoginForm.propTypes = {
-//     setToken: PropTypes.func.isRequired
-// };
 
 export default LoginForm;
 

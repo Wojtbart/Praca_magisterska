@@ -2,10 +2,7 @@ const express=require('express');
 const process = require("process");
 const path = require('path');
 const cors = require('cors');
-
-// const users=require('./servicelayer/users');
-// const discord = require('./servicelayer/discord');
-// const email = require('./servicelayer/email_service');
+const Users=require('./models/Users_model');
 
 var notificationServices = require('./routes/notificationServices');
 var users = require('./routes/users');
@@ -23,40 +20,11 @@ app.set("views", path.join(__dirname, "views"));
 // app.get('/', (req, res) => {
 //   res.render('index',{title:'Projekt z mikroserwisami'});
 // });
-const usersList = [];
-app.use('/login', (req, res) => {
-  // res.send({
-  //   token: 'test_token'
-  // });
-
-  const { login, password } = req.body;
-    //👇🏻 Checks for user(s) with the same email and password
-    let result = usersList.filter(
-        (user) => user.login === login && user.password === password
-    );
-
-    //👇🏻 If no user exists, it returns an error message
-    if (result.length !== 1) {
-        return res.json({
-            error_message: "Incorrect credentials",
-        });
-    }
-    //👇🏻 Returns the username of the user after a successful login
-    res.json({
-        message: "Login successfully",
-        data: {
-            username: result[0].username,
-        },
-    });
-});
 
 app.use('/', notificationServices);
 app.use('/', users);
 
 // app.post('/addEmailTemplate',email.addEmailTemplate);
-// app.post('/sms', discord.sendSmstoPhone);
-// app.post('/email', email.mailService);
-// app.post('/discord',discord.sendSmstoDiscordService);
 
 //error handler
 app.use(function(req, res, next) {

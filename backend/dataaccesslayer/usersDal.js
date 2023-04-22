@@ -6,7 +6,31 @@ const registerUser = async (req,res)=>{
     try {
         const {name,surname,email,password,phone,login} =  req.body;
 
-        usersList = await Users.create({
+        // const userLogin = await Users.findOne({ where: { login: login } });
+        // if(userLogin !=null){
+        //     res.status(401).json({
+        //         message: "Rejestracja nie powiodła się",
+        //         error: "Użytkownik o takim loginie już istnieje",
+        //     })
+        // }
+
+        // const userEmail = await Users.findOne({ where: { email:email } });
+        // if(userEmail !=null){
+        //     res.status(401).json({
+        //         message: "Rejestracja nie powiodła się",
+        //         error: "Użytkownik o takim mailu już istnieje",
+        //     })
+        // }
+
+        // const userPhone = await Users.findOne({ where: { phone:phone } });
+        // if(userPhone !=null){
+        //     res.status(401).json({
+        //         message: "Rejestracja nie powiodła się",
+        //         error: "Użytkownik o takim numerze telefonu już istnieje",
+        //     })
+        // }
+
+        usersList = await Users.Users_models.create({
             name: name,
             surname:surname,
             email:email,
@@ -14,6 +38,7 @@ const registerUser = async (req,res)=>{
             phone:phone,
             login:login
         });
+
     } catch (err) {
        console.log(err);
     }
@@ -27,7 +52,7 @@ const getUser = async (login)=>{
     try{
         // let {email} =  req.body;
 
-        user= await Users.findOne({
+        user= await Users.Users_models.findOne({
             where: {
                 login: login
             }
