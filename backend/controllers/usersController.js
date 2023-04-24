@@ -57,6 +57,39 @@ const getUser= async(req,res)=>{
     } 
 }
 
+const getConfiguration= async(req,res)=>{
+    let userek=null
+    try{
+        const getCOnfigurationUser= await usersService.getUser(req.params.login);
+        console.log(getCOnfigurationUser.id)
+        try{
+            // let {email} =  req.body;
+    
+            userek= await Users.Users_configuration_model.findOne({
+                where: {
+                    user_id: getCOnfigurationUser.id
+                }
+            }); 
+            console.log(userek)  
+        }
+        catch(err){
+            console.log(err);
+        } 
+
+        if (getCOnfigurationUser === null) {
+            console.log('Nie znaleziono!');
+            res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
+        } else {
+            res.status(201).json({status: 'OK', message: `Udalo sie`,data:userek});
+        } 
+    }
+    catch(err){
+        res.status(500).send({
+            message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
+        });
+    } 
+}
+
 
 const login = async (req,res)=>{
 
@@ -151,4 +184,4 @@ const saveConfiguration = async (req,res)=>{
     }
 }
 
-module.exports={registerUser, getUser, login, saveConfiguration};
+module.exports={registerUser, getUser, login, saveConfiguration, getConfiguration};

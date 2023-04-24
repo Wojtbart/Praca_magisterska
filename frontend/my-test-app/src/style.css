@@ -243,6 +243,7 @@ input[type="checkbox"] {
 table {
     border-spacing: 0;
     border: 1px solid #ededed;
+    table-layout: fixed;
   }
   table tr:last-child td {
     border-bottom: 0;
@@ -254,6 +255,9 @@ table {
     border-bottom: 1px solid #ededed;
     border-right: 1px solid #ededed;
     position: relative;
+  }
+  td{
+    word-wrap:break-word;
   }
   table th:last-child,
   table td:last-child {
@@ -289,3 +293,9 @@ table {
     font-weight: bold;
     text-transform: uppercase;
   }
+.set_active{
+    display:table-row-group;
+}
+.no_active{
+    display:none;
+}

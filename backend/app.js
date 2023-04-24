@@ -24,8 +24,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use('/', notificationServices);
 app.use('/', users);
 
-// app.post('/addEmailTemplate',email.addEmailTemplate);
-
 //error handler
 app.use(function(req, res, next) {
   var err = new Error('Nie znaleziono tej strony');

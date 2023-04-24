@@ -113,6 +113,8 @@ def get_data_and_insert(cnx,phrase):
         insert_record(cnx,arr)
 
 if __name__ == "__main__":
+    print("Wykonujemy skrypt pepper.py")
+
     db_config = read_db_config()
     cnx=None
     if len(sys.argv) <= 1 or len(sys.argv) >=3 :
@@ -122,20 +124,20 @@ if __name__ == "__main__":
         phrase=sys.argv[1]   
     
     try:
-        print('Łączenie się z bazą danych MySQL...')
+        print('Laczenie sie z baza danych MySQL...')
         cnx = MySQLConnection(**db_config)
         if (cnx.is_connected()):
-                print('Utworzono połączenie')
+                print('Utworzono polaczenie')
         else:
-            print('Połączenie nie powiodło się')
+            print('Polaczenie nie powiodlo sie')
 
         get_data_and_insert(cnx, phrase)
 
 
     except Error as e:
-        print("Błąd podczas łaczenia się z  MySQL", e)
+        print("Blad podczas laczenia sie z  MySQL", e)
     finally:
         if (cnx is not None and cnx.is_connected()):
             cnx.close()
-            print("Połączenie MySQL zostało zakończone")
-
+            print("Polaczenie MySQL zostalo zakonczone")
+    print("Skrypt pepper.py zakonczony")

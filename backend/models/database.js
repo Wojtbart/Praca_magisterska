@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
   config.mysql.password,
   {
     host: config.mysql.host,
-    dialect: config.mysql.dialect,
+    dialect: config.mysql_dialect.dialect,
     dialectModule: require('mysql2'),
     operationsAliases: false,
   }

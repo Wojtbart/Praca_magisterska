@@ -7,5 +7,6 @@ router.post('/registerUser', users.registerUser);
 router.post('/login', users.login);
 router.get('/getUser/:login', users.getUser);
 router.post('/saveConfiguration', users.saveConfiguration);
+router.get('/getConfiguration/:login', users.getConfiguration);
 
 module.exports = router;

@@ -71,13 +71,14 @@ const Users_configuration_model = sequelize.define("user_configuration", { //tab
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: true
-    },
-    
+    } 
 },{
     tableName: 'user_configuration',
     timestamps: false
 });
-Users_models.hasOne(Users_configuration_model);
+Users_models.hasOne(Users_configuration_model,{foreignKey: {
+    name: 'user_id'
+  }});
 
 sequelize.sync();
 
