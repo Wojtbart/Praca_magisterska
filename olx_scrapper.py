@@ -57,14 +57,16 @@ def get_data_and_insert(cnx,phrase):
             for elem in img:
                 if(elem['src']=='/app/static/media/no_thumbnail.15f456ec5.svg'):
 
-                    new_page = requests.get(link_to_page, headers = {
-                        'User-Agent': 'Popular browser\'s user-agent',
-                    })
-                    new_page_content = BeautifulSoup(new_page.content, "html.parser")
-                    images = new_page_content.find_all("img", {"data-testid":"swiper-image"})
+                    # tutaj moglibyśmy wchodzić na stronę każdego produktu i pobierać zdjęcie, ale wtedy tracimy na czasie
+                    # new_page = requests.get(link_to_page, headers = {
+                    #     'User-Agent': 'Popular browser\'s user-agent',
+                    # })
+                    # new_page_content = BeautifulSoup(new_page.content, "html.parser")
+                    # images = new_page_content.find_all("img", {"data-testid":"swiper-image"})
 
-                    for img in images:
-                        arr.append(img['src'])
+                    # for img in images:
+                    #     arr.append(img['src'])
+                    arr.append(None)
                 else:
                     arr.append(elem['src'])
 

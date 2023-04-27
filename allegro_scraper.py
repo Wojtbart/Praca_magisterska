@@ -48,29 +48,29 @@ def insert_record(cnx, product_name, image_link, has_promotion, quantity, price_
 
 def get_data_and_insert(cnx,object_list, key_name):
      for item in object_list[key_name]:
-                if 'sellingMode' not in item :
-                    item['sellingMode']=None
-                if 'popularity' not in item['sellingMode'] :
-                    item['sellingMode']['popularity']=None
+        if 'sellingMode' not in item :
+            item['sellingMode']=None
+        if 'popularity' not in item['sellingMode'] :
+            item['sellingMode']['popularity']=None
 
 
-                if  not item['images']:
-                    item['images']=None  
-                else:
-                    for subitem in item['images']:
-                        if 'url' in subitem :
-                            item['images']=subitem['url']
-
-                insert_record(cnx,item["name"],item["images"], item['promotion']['emphasized'], item["stock"]['available'], item['sellingMode']['price']['amount'],
-                              item['sellingMode']['popularity'],item['delivery']['lowestPrice']['amount'], item["seller"]["login"])
-                              
+        if  not item['images']:
+            item['images']=None  
+        else:
+            for subitem in item['images']:
+                if 'url' in subitem :
+                    item['images']=subitem['url']
+        print(item)
+        insert_record(cnx,item["name"],item["images"], item['promotion']['emphasized'], item["stock"]['available'], item['sellingMode']['price']['amount'],
+                        item['sellingMode']['popularity'],item['delivery']['lowestPrice']['amount'], item["seller"]["login"])
+                        
                 # print(item["name"], item["images"], item['promotion']['emphasized'], item["stock"]['available'], item["seller"]["login"],item['sellingMode']['popularity'],
                 #     item['sellingMode']['price']['amount'], item['delivery']['lowestPrice']['amount'])
 
 def find_offers(token,phrase,limit):
     try:
         # REGULARR szukamy tylko w tytulach
-        url = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase="f"{phrase}&fallback=false&limit="f"{limit}""&searchMode=REGULAR"
+        url = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase="f"{phrase}&fallback=false&limit="f"{limit}""" #&searchMode=REGULAR
         headers = {'Authorization': 'Bearer ' + token, 'Accept': "application/vnd.allegro.public.v1+json"}
 
         result = requests.get(url, headers=headers, verify=False)
@@ -107,6 +107,7 @@ def find_offers(token,phrase,limit):
 
 if __name__ == "__main__":
     access_token = get_access_token()
+    print(access_token)
 
     if len(sys.argv) <= 1 or len(sys.argv) >=3 :
         print("Podano niepoprawną ilość argumentów")
