@@ -136,6 +136,7 @@ ul{
     justify-content: center;
     align-items: center;
     display: flex;
+    /* margin: 0; */
 }
 
 .checked-item,
@@ -254,14 +255,14 @@ input[type="checkbox"] {
 table {
     border-spacing: 0;
     /* border: 1px solid #ededed; */
-    table-layout: auto; /* fixed*/
+    table-layout: auto;  
     border-collapse: collapse;
     border: 1px solid black;
-    text-align: center;
+    text-align: center; 
 	vertical-align: middle;
     margin-left: auto;
     margin-right: auto;
-    width: 120%;
+    width: 105%;
     
   }
   th, td {
@@ -286,7 +287,10 @@ table {
 /* table td.expand {
     width:25%
 } */
-
+.table_div{
+  margin:0;
+  padding: 0;
+}
 .description_product  {
     /* word-wrap: break-word; */
     /* white-space:nowrap; */

@@ -1,14 +1,18 @@
 import React, { useEffect, useState, useRef} from "react";
 import { useNavigate} from "react-router-dom";
 import TextField from "@mui/material/TextField";
+import * as ReactBootStrap from "react-bootstrap";
 
 const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const WEBSITES_NAMES=["pepper", "amazon", "olx", "allegro"]
-  const NOTIFICATION_NAMES=["email", "sms", "discord"]
-  const CHOICES=["aktualna_oferta", "godzina_maila"]
+  const WEBSITES_NAMES=["pepper", "amazon", "olx", "allegro"];
+  const NOTIFICATION_NAMES=["email", "sms", "discord"];
+  const CHOICES=["aktualna_oferta", "godzina_maila"];
+
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [phrase, setPhrase] = useState("");
   const [requestsNumber, setRequestsNumber] = useState("");
@@ -46,26 +50,31 @@ const Dashboard = () => {
   };
 
   function getUserConfig() {
-      
-    return fetch(`http://localhost:9005/getConfiguration/${localStorage.getItem("login")}`, {
+    try {
+      return fetch(`http://localhost:9005/getConfiguration/${localStorage.getItem("login")}`, {
       method: 'GET'
-    }).then( async response => {
-
+      })
+      .then( async response => {
+        
         const dataObj= await response.json();
         if (!response.ok) {
             const error = (dataObj && dataObj.message) || response.statusText;
             return Promise.reject(error);
         }
         return dataObj.data;
-    })
-    .catch(error => {
-      this.setState({ errorMessage: error.toString() });
-      console.error('Wystąpił błąd!', error);
-    });
+      })
+      .catch(error => {
+        this.setState({ errorMessage: error.toString() });
+        console.error('Wystąpił błąd!', error);
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    
   }
 
   async function getData(json_data) {
-
+    setLoading(true);
     let websites=[];
     let notifications=[];
     let actual_or_mail_hour=null;
@@ -98,8 +107,6 @@ const Dashboard = () => {
     Obj.websites.push(websites);
     Obj.notifications.push(notifications);
     Obj.actual_or_mail_hour=actual_or_mail_hour;
-    console.log("websites",websites)
-    console.log("OBJECT: ",JSON.stringify(Obj))
 
     return fetch(`http://localhost:9005/getData`, {
       method: 'POST',
@@ -109,7 +116,8 @@ const Dashboard = () => {
       body: JSON.stringify(Obj)
     })
     .then(async response => {
-
+      
+      setLoading(false);
       const data = await response.json();
       if (!response.ok) {
           const error = (data && data.message) || response.statusText;
@@ -152,6 +160,7 @@ const Dashboard = () => {
     .catch(error => {
         this.setState({ errorMessage: error.toString() });
         console.error('Wystąpił błąd!', error);
+        setLoading(false);
     });
   }
     
@@ -160,34 +169,35 @@ const Dashboard = () => {
 
     e.preventDefault();
 
-    setPhrase('')
-    setRequestsNumber(0)
-    // dataFromServicePepper=[];
-    // dataFromServiceOlx=[];
-    // dataFromServiceAmazon=[];
-    // dataFromServiceAllegro=[];
+    setPhrase('');
+    setRequestsNumber('');
+    setDataFromServiceAllegro([]);
+    setDataFromServiceAmazon([]);
+    setDataFromServiceOlx([]);
+    setDataFromServicePepper([]);
 
-    // isActiveTablePepper=false;
-    // isActiveTableOlx=false;
-    // isActiveTableAmazon=false;
-    // isActiveTableAllegro=false;
-    console.log(pepperTable.current)
+    setIsActiveTableAllegro(false);
+    setIsActiveTableAmazon(false);
+    setIsActiveTableOlx(false);
+    setIsActiveTablePepper(false);
 
+    if(requestsNumber &&phrase) setDisabled(false);
   }
   
   const handleSubmit = async (e) => {
 
     e.preventDefault();
+    setDisabled(true);
 
     let phrase_value=phrase;
     let request_number=requestsNumber;
-    console.log(request_number)
     let  user_config = await getUserConfig();
 
     user_config.phrase = phrase_value;
     user_config.request_number = request_number;
 
     await getData(user_config);
+    
   }
   
     
@@ -227,6 +237,7 @@ const Dashboard = () => {
                     id="outlined-number"
                     label="Liczba"
                     type="number"
+                    value={requestsNumber}
                     onChange={(e) => {
                       setRequestsNumber(e.target.value);
                     }}
@@ -239,11 +250,13 @@ const Dashboard = () => {
                   />
                 </div>
                 <div>
-                <button className="btn loadButton" disabled={!requestsNumber || !phrase } onClick={handleSubmit}>ZAŁADUJ</button>
+                <button className="btn loadButton" disabled={!requestsNumber || !phrase || disabled } onClick={handleSubmit}>ZAŁADUJ</button>
                 <button className="btn resetBtn" onClick={handleReset} >RESET</button>
                 </div>
               </div> 
 
+            {!loading?
+            <div className="table_div">         
             <table ref={pepperTable} className={isActiveTablePepper ? 'set_active' : 'no_active'}>
               <caption>PEPPER</caption>
               <thead>
@@ -289,15 +302,14 @@ const Dashboard = () => {
               <thead>
                 <tr>
                   <th>Tytuł</th>
-                  <th>Link</th>
-                  <th>Zdjęcie</th>
-                  <th>Ocena</th>
-                  <th>Dostawa w dniu</th>
-                  <th>koszt dostawy</th>
                   <th>Cena oryginalna</th>
                   <th>Cena promocyjna</th>
+                  <th>Link</th>
+                  <th>Zdjęcie</th>
+                  <th>Do kiedy dostawa</th>
+                  <th>Czy darmowa dostawa</th>
+                  <th>Ocena</th>
                   <th>Ilosc komentarzy</th>
-                  <th>Ilośc dostępnych</th> 
                 </tr>
               </thead>
               <tbody>
@@ -305,15 +317,14 @@ const Dashboard = () => {
                   dataFromServiceAmazon.map((item, index) => (
                     <tr key={index}>
                       <th>{item.Tytul}</th>
+                      <td >{item.Cena_oryginalna===''|| !item.Cena_oryginalna  ? 'BRAK' : item.Cena_oryginalna}</td>
+                      <td >{item.Cena_promocyjna===''|| !item.Cena_promocyjna  ? 'BRAK' : item.Cena_promocyjna+' zł'}</td>
                       <td >{item.Link===''|| !item.Link  ? 'BRAK' : <a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Link}>Link</a>}</td>
                       <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Zdjecie} >Zdjęcie</a></td>
-                      <td >{item.Ocena_w_gwiazdkach===''|| !item.Ocena_w_gwiazdkach  ? 'BRAK' : item.Ocena_w_gwiazdkach}</td>
-                      <td >{item.Dostawa===''|| !item.Dostawa  ? 'BRAK' : item.Dostawa}</td>
+                      <td >{item.Dostawa===''|| !item.Dostawa  ? 'BRAK informacji' : item.Dostawa}</td>
                       <td >{item.Czy_darmowa_dostawa===''|| !item.Czy_darmowa_dostawa  ? 'TAK' : item.Czy_darmowa_dostawa}</td>
-                      <td >{item.Cena_oryginalna===''|| !item.Cena_oryginalna  ? 'BRAK' : item.Cena_oryginalna}</td>
-                      <td >{item.Cena_promocyjna===''|| !item.Cena_promocyjna  ? 'BRAK' : item.Cena_promocyjna}</td>
+                      <td >{item.Ocena_w_gwiazdkach===''|| !item.Ocena_w_gwiazdkach  ? 'BRAK' : item.Ocena_w_gwiazdkach}</td>
                       <td >{item.Ilosc_komentarzy===''|| !item.Ilosc_komentarzy  ? 'BRAK' : item.Ilosc_komentarzy}</td>
-                      <td >{item.Ilosc_dostepnych===''|| !item.Ilosc_dostepnych  ? 'BRAK' : item.Ilosc_dostepnych}</td> 
                     </tr>
                   )) 
                 }
@@ -380,7 +391,7 @@ const Dashboard = () => {
                 }
               </tbody>
             </table>
-
+            </div> : <ReactBootStrap.Spinner animation="border" />}
           </div>
       </div>
     </>
