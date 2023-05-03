@@ -13,10 +13,14 @@ const ConfigurationPage = () => {
 
     const [checked2, setChecked2] = useState(false);
     const [checkedActualOffer, setCheckedActualOffer] = useState(false);
+
+    const [checked3, setChecked3] = useState(false);
+    // const [checkedActualOffer, setCheckedActualOffer] = useState(false);
     const [text, setText] = useState("");
     const [text2, setText2] = useState("");
     const actualOfferCheckbox = useRef();
     const timeCheckbox = useRef();
+    const minutesCheckbox = useRef();
 
     const handleCheck = (event) => {
         var updatedList = [...checked];
@@ -69,7 +73,7 @@ const ConfigurationPage = () => {
 
     async function getUser() {
         
-        fetch(`http://localhost:9005/getUser/${localStorage.getItem("login")}`, {
+        return fetch(`http://localhost:9005/getUser/${localStorage.getItem("login")}`, {
             method: 'GET'
         })
         .then(async response => {
@@ -83,7 +87,34 @@ const ConfigurationPage = () => {
         })
         .catch(error => {
             this.setState({ errorMessage: error.toString() });
-            console.error('There was an error!', error);
+            console.error('Wystąpił błąd!', error);
+        });
+    }
+
+    async function getUserConfiguration() {
+        
+        return fetch(`http://localhost:9005/getConfiguration/${localStorage.getItem("login")}`, {
+            method: 'GET'
+        })
+        .then(async response => {
+
+            const dataFromBackend = await response.json();
+            if (!response.ok) {
+                const error = (dataFromBackend && dataFromBackend.message) || response.statusText;
+                return Promise.reject(error);
+            }
+            console.log(dataFromBackend)
+            if("data" in dataFromBackend){
+                return dataFromBackend.data;
+            } 
+            else{
+                return null;
+            } 
+            
+        })
+        .catch(error => {
+            this.setState({ errorMessage: error.toString() });
+            console.error('Wystąpił błąd!', error);
         });
     }
     
@@ -139,8 +170,10 @@ const ConfigurationPage = () => {
 
         if(checked2) obj['godzina_maila']=text;
         if(checkedActualOffer) obj['aktualna_oferta']=true;
-        obj['user_id']=getUser();
-        
+
+        obj['user_id']=await getUser();
+        const userConfig =await  getUserConfiguration()
+        console.log(userConfig)
         saveConfigurationToDatabase(obj);
     }
     
@@ -208,9 +241,11 @@ const ConfigurationPage = () => {
                             (e) => {
                                 if(actualOfferCheckbox.current.checked){
                                     timeCheckbox.current.disabled=true;
+                                    minutesCheckbox.current.disabled=true;
                                 }
                                 else{
                                     timeCheckbox.current.disabled=false;
+                                    minutesCheckbox.current.disabled=false;
                                 }
                                 setCheckedActualOffer(!checkedActualOffer)
                         }}
@@ -231,9 +266,11 @@ const ConfigurationPage = () => {
 
                             if(timeCheckbox.current.checked){
                                 actualOfferCheckbox.current.disabled=true;
+                                minutesCheckbox.current.disabled=true;
                             }
                             else{
                                 actualOfferCheckbox.current.disabled=false;
+                                minutesCheckbox.current.disabled=false;
                             }
                             setChecked2(!checked2)
                         }}
@@ -252,6 +289,44 @@ const ConfigurationPage = () => {
                         onChange={e => setText(e.target.value)}
                         />
                     </label>
+
+                    <label>
+                        <input
+                        name="checkbox"
+                        type="checkbox"
+                        checked={checked3}
+                        ref={minutesCheckbox}
+                        onChange={() => {
+                            // if(checked3){
+                            //     setText(getActualTime())
+                            // }
+
+                            if(minutesCheckbox.current.checked){
+                                actualOfferCheckbox.current.disabled=true;
+                                timeCheckbox.current.disabled=true;
+                            }
+                            else{
+                                actualOfferCheckbox.current.disabled=false;
+                                timeCheckbox.current.disabled=false;
+                            }
+                            setChecked3(!checked3)
+                        }}
+                        />
+                        Co ile minut chcesz wysyłać wiadomości
+                    </label>
+
+                    <label className="timeLabel">
+                        Co ile minut:
+                        <input
+                        name="input"
+                        id="minuteCheckbox"
+                        type="number"
+                        disabled={!checked3}
+                        value={text}
+                        onChange={e => setText(e.target.value)}
+                        />
+                    </label>
+
                 </div>
                 
                 <div>

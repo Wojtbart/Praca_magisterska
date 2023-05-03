@@ -47,6 +47,7 @@ const getUser= async(req,res)=>{
             console.log('Nie znaleziono!');
             res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
         } else {
+            console.log("Znalazłem")
             res.status(201).json({status: 'OK', message: `Znaleziono użytkownika o loginie: ${getUser.login}`,user_id:getUser.id});
         } 
     }
@@ -61,7 +62,7 @@ const getConfiguration= async(req,res)=>{
     let userek=null
     try{
         const getCOnfigurationUser= await usersService.getUser(req.params.login);
-        console.log(getCOnfigurationUser.id)
+        // console.log(getCOnfigurationUser.id)
         try{
             // let {email} =  req.body;
     
@@ -70,7 +71,8 @@ const getConfiguration= async(req,res)=>{
                     user_id: getCOnfigurationUser.id
                 }
             }); 
-            console.log(userek)  
+            // console.log("User",userek)  
+            console.log("jestem w zapisywaniu konfigu\n\n") 
         }
         catch(err){
             console.log(err);
@@ -84,6 +86,7 @@ const getConfiguration= async(req,res)=>{
         } 
     }
     catch(err){
+        console.log(err)
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
         });
@@ -123,13 +126,13 @@ const login = async (req,res)=>{
 }
 
 const saveConfiguration = async (req,res)=>{
-    const { olx, amazon, allegro,pepper, sms,discord,email,aktualna_oferta,godzina_maila } = req.body;
+    const { olx, amazon, allegro,pepper, sms,discord,email,aktualna_oferta,godzina_maila, user_id } = req.body;
 
     try {
         // const user = await Users.findOne({ where: { login: login, password:password } });
         // Users.Users_configuration_model
 
-        // let usersList={};
+        let usersList={};
     
             // const userLogin = await Users.findOne({ where: { login: login } });
             // if(userLogin !=null){
@@ -154,8 +157,29 @@ const saveConfiguration = async (req,res)=>{
             //         error: "Użytkownik o takim numerze telefonu już istnieje",
             //     })
             // }
-            console.log(req.body)
-            usersList = await Users.Users_configuration_model.create({
+            let updated;
+            configUser = await Users.Users_configuration_model.findAll({
+                where:{
+                    user_id: user_id
+                }
+            })
+            if(configUser != null){
+                updated=  Users.Users_configuration_model.update(
+                    { olx:olx,
+                        amazon:amazon,
+                        allegro:allegro,
+                        pepper: pepper,
+                        sms:sms,
+                        email:email,
+                        discord:discord,
+                        aktualna_oferta:aktualna_oferta,
+                        godzina_maila:godzina_maila
+                    },
+                    { where: { user_id: user_id } }
+                );
+            }
+            else{
+                updated = await Users.Users_configuration_model.create({
                 olx:olx,
                 amazon:amazon,
                 allegro:allegro,
@@ -165,14 +189,13 @@ const saveConfiguration = async (req,res)=>{
                 discord:discord,
                 aktualna_oferta:aktualna_oferta,
                 godzina_maila:godzina_maila,
-                user_id:9
+                user_id:4
             });
-            console.log()
+            }
+
+        
            return  res.status(200).json({
-                message: "Poprawnie udało się dodać dane",
-                // login:user.login,
-                // email:user.email,
-                // phone:user.phone,
+                message: "Udało się poprawnie zapisać dane!!",
             })
     
         

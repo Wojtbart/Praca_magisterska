@@ -9,6 +9,7 @@ urllib3.disable_warnings()
 CLIENT_ID = "9096efe8383644ee91a44d1de4c637f6"  # Client_ID aplikacji
 CLIENT_SECRET = "mDwdm9XPlp0EElARDCOFkrTxbjZGG3x8dEb1tGC2MmEgSB6fWlKtOY9NmkuFQe1p" #Client_Secret aplikacji
 TOKEN_URL = "https://allegro.pl.allegrosandbox.pl/auth/oauth/token"
+COUNTER=0
 
 def get_access_token():
     try:
@@ -31,6 +32,7 @@ def get_main_categories(token):
    
 def insert_record(cnx, product_name, image_link, has_promotion, quantity, price_in_PLN, popularity, delivery_in_PLN, seller_name):
 
+    global COUNTER
     query = "INSERT INTO artykuly.artykuly_allegro(product_name,image_link,has_promotion, quantity, price_in_PLN, popularity, delivery_in_PLN, seller_name ) " \
             "VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
     args = (product_name,image_link,has_promotion, quantity, price_in_PLN, popularity, delivery_in_PLN, seller_name)
@@ -40,7 +42,8 @@ def insert_record(cnx, product_name, image_link, has_promotion, quantity, price_
         cursor.execute(query, args)
 
         cnx.commit()
-        print("Wykonany insert do bazy danych!")
+        # print("Wykonany insert do bazy danych!")
+        COUNTER+=1
     except Error as error:
         print("Błąd przy funkcji insert!! ",error)
     finally:
@@ -60,7 +63,8 @@ def get_data_and_insert(cnx,object_list, key_name):
             for subitem in item['images']:
                 if 'url' in subitem :
                     item['images']=subitem['url']
-        print(item)
+        # print("ITEM",item)
+
         insert_record(cnx,item["name"],item["images"], item['promotion']['emphasized'], item["stock"]['available'], item['sellingMode']['price']['amount'],
                         item['sellingMode']['popularity'],item['delivery']['lowestPrice']['amount'], item["seller"]["login"])
                         
@@ -74,44 +78,51 @@ def find_offers(token,phrase,limit):
         headers = {'Authorization': 'Bearer ' + token, 'Accept': "application/vnd.allegro.public.v1+json"}
 
         result = requests.get(url, headers=headers, verify=False)
+        
         items = result.json()
-        # print(items)
         object_list = items['items']
+        if ( not object_list.get("promoted") and not object_list.get("regular") ): return
+        else:
+            
+            db_config = read_db_config()
+            cnx=None
 
-        db_config = read_db_config()
-        cnx=None
+            try:
 
-        try:
+                # print('Łączenie się z bazą danych MySQL...')
+                cnx = MySQLConnection(**db_config)
+                if (cnx.is_connected()):
+                    print('Utworzono połączenie z bazą danych')
+                else:
+                    print('Połączenie nie powiodło się')
 
-            print('Łączenie się z bazą danych MySQL...')
-            cnx = MySQLConnection(**db_config)
-            if (cnx.is_connected()):
-                 print('Utworzono połączenie')
-            else:
-                print('Połączenie nie powiodło się')
+                get_data_and_insert(cnx, object_list,'promoted')
 
-            get_data_and_insert(cnx, object_list,'promoted')
-
-            get_data_and_insert(cnx, object_list,'regular')
+                get_data_and_insert(cnx, object_list,'regular')
 
 
-        except Error as e:
-            print("Błąd podczas łaczenia się z  MySQL", e)
-        finally:
-            if (cnx is not None and cnx.is_connected()):
-                cnx.close()
-                print("Połączenie MySQL zostało zakończone")
+            except Error as e:
+                print("Błąd podczas łaczenia się z  MySQL", e)
+            finally:
+                if (cnx is not None and cnx.is_connected()):
+                    cnx.close()
+                    print("Połączenie MySQL zostało zakończone")
 
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)   
 
 if __name__ == "__main__":
     access_token = get_access_token()
-    print(access_token)
+    phrase=''
+    print("Wykonujemy skrypt allegro_scrapper.py")
 
     if len(sys.argv) <= 1 or len(sys.argv) >=3 :
         print("Podano niepoprawną ilość argumentów")
         sys.exit()
     else:
-        phrase=sys.argv[1] 
+        phrase=''
+        n = len(sys.argv)
+        for i in range(1, n):
+            phrase+=sys.argv[i] 
     find_offers( access_token, phrase, 100)
+    print(COUNTER)

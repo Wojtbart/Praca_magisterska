@@ -1,5 +1,5 @@
-import React, { useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef} from "react";
+import { useNavigate} from "react-router-dom";
 import TextField from "@mui/material/TextField";
 
 const Dashboard = () => {
@@ -11,12 +11,18 @@ const Dashboard = () => {
   const CHOICES=["aktualna_oferta", "godzina_maila"]
 
   const [phrase, setPhrase] = useState("");
-  const [isActiveTable, setIsActiveTable] = useState(false);
   const [requestsNumber, setRequestsNumber] = useState("");
   const [dataFromServicePepper, setDataFromServicePepper] = useState([]);
   const [dataFromServiceOlx, setDataFromServiceOlx] = useState([]);
   const [dataFromServiceAllegro, setDataFromServiceAllegro] = useState([]);
   const [dataFromServiceAmazon, setDataFromServiceAmazon] = useState([]);
+
+  const [isActiveTablePepper, setIsActiveTablePepper] = useState(false);
+  const [isActiveTableOlx, setIsActiveTableOlx] = useState(false);
+  const [isActiveTableAmazon, setIsActiveTableAmazon] = useState(false);
+  const [isActiveTableAllegro, setIsActiveTableAllegro] = useState(false);
+
+  const pepperTable = useRef();
   
   useEffect(() => {
     const checkUser = () => {
@@ -92,6 +98,8 @@ const Dashboard = () => {
     Obj.websites.push(websites);
     Obj.notifications.push(notifications);
     Obj.actual_or_mail_hour=actual_or_mail_hour;
+    console.log("websites",websites)
+    console.log("OBJECT: ",JSON.stringify(Obj))
 
     return fetch(`http://localhost:9005/getData`, {
       method: 'POST',
@@ -107,26 +115,37 @@ const Dashboard = () => {
           const error = (data && data.message) || response.statusText;
           return Promise.reject(error);
       }
+      if(data.pepper_data.length!==0){
+        setIsActiveTablePepper(current => !current);
+        data.pepper_data.sort(function(a, b){
+          return a.id - b.id;
+        });
+        setDataFromServicePepper(data.pepper_data);
+      }
 
-      data.pepper_data.sort(function(a, b){
-        return a.id - b.id;
-      });
-      setDataFromServicePepper(data.pepper_data);
+      if(data.olx_data.length!==0){
+        setIsActiveTableOlx(current => !current);
+        data.olx_data.sort(function(a, b){
+          return a.id - b.id;
+        });
+        setDataFromServiceOlx(data.olx_data);
+      }
 
-      data.olx_data.sort(function(a, b){
-        return a.id - b.id;
-      });
-      setDataFromServiceOlx(data.olx_data);
+      if(data.allegro_data.length!==0){
+        setIsActiveTableAllegro(current => !current);
+        data.allegro_data.sort(function(a, b){
+          return a.id - b.id;
+        });
+        setDataFromServiceAllegro(data.allegro_data);
+      }
 
-      data.allegro_data.sort(function(a, b){
-        return a.id - b.id;
-      });
-      setDataFromServiceAllegro(data.allegro_data);
-
-      data.amazon_data.sort(function(a, b){
-        return a.id - b.id;
-      });
-      setDataFromServiceAmazon(data.amazon_data);
+      if(data.amazon_data.length!==0){
+        setIsActiveTableAmazon(current => !current);
+        data.amazon_data.sort(function(a, b){
+          return a.id - b.id;
+        });
+        setDataFromServiceAmazon(data.amazon_data);
+      }
 
       return data;
     })
@@ -136,6 +155,25 @@ const Dashboard = () => {
     });
   }
     
+
+  const handleReset = async (e) => {
+
+    e.preventDefault();
+
+    setPhrase('')
+    setRequestsNumber(0)
+    // dataFromServicePepper=[];
+    // dataFromServiceOlx=[];
+    // dataFromServiceAmazon=[];
+    // dataFromServiceAllegro=[];
+
+    // isActiveTablePepper=false;
+    // isActiveTableOlx=false;
+    // isActiveTableAmazon=false;
+    // isActiveTableAllegro=false;
+    console.log(pepperTable.current)
+
+  }
   
   const handleSubmit = async (e) => {
 
@@ -143,13 +181,13 @@ const Dashboard = () => {
 
     let phrase_value=phrase;
     let request_number=requestsNumber;
-    let  user_config=await getUserConfig();
+    console.log(request_number)
+    let  user_config = await getUserConfig();
 
     user_config.phrase = phrase_value;
     user_config.request_number = request_number;
 
     await getData(user_config);
-    setIsActiveTable(current => !current);
   }
   
     
@@ -200,10 +238,13 @@ const Dashboard = () => {
                     }}
                   />
                 </div>
-                <div><button className="btn loadButton" disabled={!requestsNumber || !phrase } onClick={handleSubmit}>ZAŁADUJ</button></div>
+                <div>
+                <button className="btn loadButton" disabled={!requestsNumber || !phrase } onClick={handleSubmit}>ZAŁADUJ</button>
+                <button className="btn resetBtn" onClick={handleReset} >RESET</button>
+                </div>
               </div> 
 
-            <table className={isActiveTable ? 'set_active' : 'no_active'}>
+            <table ref={pepperTable} className={isActiveTablePepper ? 'set_active' : 'no_active'}>
               <caption>PEPPER</caption>
               <thead>
                 <tr>
@@ -243,7 +284,7 @@ const Dashboard = () => {
               </tbody>
             </table>
 
-            <table className={isActiveTable ? 'set_active' : 'no_active'}>
+            <table className={isActiveTableAmazon ? 'set_active' : 'no_active'}>
               <caption>Amazon</caption>
               <thead>
                 <tr>
@@ -279,7 +320,7 @@ const Dashboard = () => {
               </tbody>
             </table>
 
-            <table className={isActiveTable ? 'set_active' : 'no_active'}>
+            <table className={isActiveTableOlx ? 'set_active' : 'no_active'}>
               <caption>OLX</caption>
               <thead>
                 <tr>
@@ -308,7 +349,7 @@ const Dashboard = () => {
             </table>
 
 
-            <table className={isActiveTable ? 'set_active' : 'no_active'}>
+            <table className={isActiveTableAllegro ? 'set_active' : 'no_active'}>
               <caption>ALLEGRO</caption>
               <thead>
                 <tr>

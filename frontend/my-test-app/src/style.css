@@ -448,3 +448,6 @@ table {
 .loadButton:hover{
     background-color: rgb(16, 110, 192);
 }
+.resetBtn{
+  margin-left: 20px;
+}
