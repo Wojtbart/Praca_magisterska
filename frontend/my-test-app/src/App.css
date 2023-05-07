@@ -37,17 +37,11 @@
   }
 }
 
-/* .inline{
-  display: inline;
-} */
 .HeaderTitle{
   color: white;
   text-align: center;
 }
 .logout{
-  /* display: inline !important; */
-  /* max-width:200px !important; */
-  /* width: 300px; */
   position: absolute;
   right: 10px;
   top: 0.5rem;

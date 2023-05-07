@@ -10,15 +10,15 @@ def insert_record(cnx, arr):
     global COUNTER
     query = "INSERT INTO artykuly.artykuly_olx(Tytul, Link, Zdjecie, cena, stan, lokalizacja, obserwuj) " \
             "VALUES(%s,%s,%s,%s,%s,%s,%s)"
+    
     # dodaje 1 null do koncowej kolumny tabeli
     arr.append(None)
 
     try:
         cursor = cnx.cursor()
         cursor.execute(query, arr)
-
         cnx.commit()
-        # print("Wykonany insert do bazy danych!")
+
         COUNTER+=1
     except Error as error:
         print("Błąd w funkcji insert!! ",error)
@@ -65,7 +65,7 @@ def get_data_and_insert(cnx,phrase):
 
             for elem in link:
                 link_to_page='https://www.olx.pl'+elem['href']
-                arr.append('https://www.olx.pl'+elem['href'])
+                arr.append(link_to_page)
 
             if( not img):
                 arr.append(None)
@@ -129,7 +129,6 @@ if __name__ == "__main__":
     
     
     try:
-        # print('Łączenie się z bazą danych MySQL...')
         cnx = MySQLConnection(**db_config)
         if (cnx.is_connected()):
                 print('Utworzono połączenie')
@@ -137,7 +136,7 @@ if __name__ == "__main__":
             print('Połączenie nie powiodło się')
 
         get_data_and_insert(cnx, phrase)
-        print(COUNTER)
+        print("Liczba rekordow:",COUNTER)
 
     except Error as e:
         print("Błąd podczas łaczenia się z  MySQL", e)

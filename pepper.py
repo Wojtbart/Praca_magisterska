@@ -12,6 +12,7 @@ def insert_record(cnx, arr):
           uzytkownik_wystawiajacy, ilosc_komentarzy, ilosc_glosow_za_produktem, Czy_promocja_trwa, Opublikowano,\
            Kupony_promocyjne, Firma_sprzedajaca, avatar) " \
             "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    
     # dodaje 3 nulle do koncowych kolumn tabeli
     arr.append(None)
     arr.append(None)
@@ -20,9 +21,8 @@ def insert_record(cnx, arr):
     try:
         cursor = cnx.cursor()
         cursor.execute(query, arr)
-        # print(arr)
         cnx.commit()
-        # print("Wykonany insert do bazy danych!")
+
         COUNTER+=1
     except Error as error:
         print("Błąd w funkcji insert!! ",error)
@@ -145,7 +145,6 @@ if __name__ == "__main__":
             phrase+=sys.argv[i] 
     
     try:
-        # print('Laczenie sie z baza danych MySQL...')
         cnx = MySQLConnection(**db_config)
         if (cnx.is_connected()):
                 print('Utworzono polaczenie')
@@ -153,7 +152,7 @@ if __name__ == "__main__":
             print('Polaczenie nie powiodlo sie')
 
         get_data_and_insert(cnx, phrase)
-        print(COUNTER)
+        print("Liczba rekordow:",COUNTER)
 
     except Error as e:
         print("Blad podczas laczenia sie z  MySQL", e)
@@ -161,4 +160,3 @@ if __name__ == "__main__":
         if (cnx is not None and cnx.is_connected()):
             cnx.close()
             print("Polaczenie MySQL zostalo zakonczone")
-    # print("Skrypt pepper.py zakonczony")

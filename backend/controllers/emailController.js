@@ -2,7 +2,7 @@ const emailService=require('../servicelayer/email_service');
 
 const sendMailController= async (req,res)=>{
     try{
-        const sendMail= await emailService.sendMailService();
+        const sendMail= await emailService.sendMailService(req);
         res.status(201).json({status: 'OK', message: 'Poprawnie wysłano email!'});
     }
     catch(err){

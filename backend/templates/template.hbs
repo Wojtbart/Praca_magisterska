@@ -1,0 +1,262 @@
+
+<html>
+  <head>
+    <title>MAILING sprzedażowy</title>
+
+    <style>
+      body{
+        background-image: linear-gradient( 95.2deg, rgba(173,252,234,1) 26.8%, rgba(192,229,246,1) 64% );
+        font-family: sans-serif;
+      }
+      .container{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+      table {
+        border-spacing: 0;
+        table-layout: auto;  
+        border-collapse: collapse;
+        border: 1px solid black;
+        text-align: center; 
+        vertical-align: middle;
+        margin-left: auto;
+        margin-right: auto;
+        width: 99%;
+      }
+      th, td {
+        border: 1px solid black;
+        padding: 1em;
+      }
+      caption {
+        font-weight: bold;
+        font-size: 24px;
+        text-align: left;
+        color: rgb(253, 118, 68);
+        margin-bottom: 16px;
+        caption-side: top; 
+        text-align: center;
+      }
+      .table_div{
+        margin:0;
+        padding: 0;
+      }
+      .description_product  {
+        white-space: normal;
+        word-wrap: break-word;
+        text-align: center;
+        max-height: 40px;
+        min-height: 40px;
+        width: 20.28%;
+        overflow: auto;
+      }
+
+      thead {
+        background-color: #333;
+        color: white;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 2%;
+      }
+      tbody tr:nth-child(odd) {
+        background-color: #fff;
+      }
+      
+      tbody tr:nth-child(even) {
+        background-color: #eee;
+      }
+      tbody th {
+        background-color: #36c;
+        color: #fff;
+        text-align: left;
+      }
+      tbody tr:nth-child(even) th {
+        background-color: #25c;
+      }
+
+    .table-link {
+        background-color: red;
+        box-shadow: 0 5px 0 darkred;
+        color: white !important;
+        padding: 0.6em 1em;
+        position: relative;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      
+      .table-link:hover {
+        background-color: #ce0606;
+        cursor: pointer;
+        color: white !important;
+        text-decoration: underline;
+      }
+      a:not([href]):not([tabindex]):hover{
+        color: white;
+        text-decoration: none;
+        background-color: #ce0606
+      }
+      
+      .table-link:active {
+        box-shadow: none;
+        top: 5px;
+      }
+      .input-dashboard{
+        display:inline-block;
+        width:40%;
+        padding: 10px;
+      }
+      .set_active{
+        display:table;
+        margin: 0 ;
+        margin-bottom: 50px;  
+    }
+    </style>
+  </head>
+  <body>
+    <h2>OFERTY SPRZEDAŻOWE</h2>
+    <div class="container">
+      <div class='table_div'>
+
+        {{#if arrayOlx}}
+        <table class="set_active">
+          <caption>OLX</caption>
+          <thead>
+            <tr>
+              <th>Tytuł</th>
+              <th>Cena</th>
+              <th>Lokalizacja</th>
+              <th>Link</th>
+              <th>Zdjęcie</th>
+              <th>Stan</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {{#each arrayOlx}}
+              <tr>
+                <th>{{this.Tytul}}</th>
+                <td >{{this.Cena}}</td>
+                <td >{{this.Lokalizacja}}</td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Link}}>Link</a></td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Zdjecie}}>Zdjecie</a></td>
+                <td >{{this.Stan}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+
+        {{#if arrayAllegro}}
+        <table class="set_active">
+          <caption>Allegro</caption>
+          <thead>
+            <tr>
+              <th>Tytuł</th>
+              <th>Link</th>
+              <th>Czy jest w promocji</th>
+              <th>Ilość</th>
+              <th>Cena</th>
+              <th>Popularność</th>
+              <th>Dostawa</th>
+              <th>Użytkownik wystawiający</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+            {{#each arrayAllegro}}
+              <tr>
+                <th>{{this.product_name}}</th>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.image_link}}>Link</a></td>
+                <td >{{this.has_promotion}}</td>
+                <td >{{this.quantity}}</td>
+                <td >{{this.price_in_PLN}}</td>
+                <td >{{this.popularity}}</td>
+                <td >{{this.delivery_in_PLN}}</td>
+                <td >{{this.seller_name}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+
+        {{#if arrayPepper}}
+        <table class="set_active">
+          <caption>Pepper</caption>
+          <thead>
+            <tr>
+              <th>Tytuł</th>
+              <th>Cena oryginalna</th>
+              <th>Cena promocyjna</th>
+              <th>Czy promocja trwa</th>
+              <th>Dostawa</th>
+              <th>Opis</th>
+              <th>Link</th>
+              <th>Obniżka w %</th>
+              <th>Opublikowano</th>
+              <th>Zdjęcie</th>
+              <th>Ilość komentarzy</th>
+              <th>Użytkownik wystawiający</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+            {{#each arrayPepper}}
+              <tr>
+                <th>{{this.Tytul}}</th>
+                <td>{{this.Cena_oryginalna}}</td>
+                <td>{{this.Cena_promocyjna}}</td>
+                <td>{{this.Czy_promocja_trwa}}</td>
+                <td>{{this.Dostawa}}</td>
+                <td class="description_product">{{this.Opis}}</td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Link}}>Link</a></td>
+                <td >{{this.Obnizka_w_procentach}}</td>
+                <td >{{this.Opublikowano}}</td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Zdjecie}}>Zdjecie</a></td>
+                <td >{{this.ilosc_komentarzy}}</td>
+                <td >{{this.uzytkownik_wystawiajacy}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+
+         {{#if arrayAmazon}}
+        <table class="set_active">
+          <caption>Amazon</caption>
+          <thead>
+            <tr>
+              <th>Tytuł</th>
+              <th>Cena oryginalna</th>
+              <th>Cena promocyjna</th>
+              <th>Link</th>
+              <th>Zdjęcie</th>
+              <th>Do kiedy dostawa</th>
+              <th>Czy darmowa dostawa</th>
+              <th>Ocena</th>
+              <th>Ilosc komentarzy</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+            {{#each arrayAmazon}}
+              <tr>
+                <th>{{this.Tytul}}</th>
+                <td>{{this.Cena_oryginalna}}</td>
+                <td>{{this.Cena_promocyjna}}</td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Link}}>Link</a></td>
+                <td ><a class="table-link" target="_blank" rel="noopener noreferrer" href={{this.Zdjecie}}>Zdjecie</a></td>
+                <td>{{this.Dostawa}}</td>
+                <td >{{this.Czy_darmowa_dostawa}}</td>
+                <td >{{this.Ocena_w_gwiazdkach}}</td>
+                <td >{{this.Ilosc_komentarzy}}</td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+
+      </div>
+    </div>
+  </body>
+</html>

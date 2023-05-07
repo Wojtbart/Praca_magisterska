@@ -2,7 +2,6 @@ const express=require('express');
 const process = require("process");
 const path = require('path');
 const cors = require('cors');
-const Users=require('./models/Users_model');
 
 var notificationServices = require('./routes/notificationServices');
 var users = require('./routes/users');
@@ -15,11 +14,6 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors())
 app.set('view engine', 'pug')
 app.set("views", path.join(__dirname, "views"));
-
-// ENDPOINTS
-// app.get('/', (req, res) => {
-//   res.render('index',{title:'Projekt z mikroserwisami'});
-// });
 
 app.use('/', notificationServices);
 app.use('/', users);
@@ -41,3 +35,8 @@ app.use(function(err, req, res, next) {
 app.listen(PORT, ()=> console.log(`Listening on ${PORT} ...`));
 
 module.exports = app;
+
+// ENDPOINTS
+// app.get('/', (req, res) => {
+//   res.render('index',{title:'Projekt z mikroserwisami'});
+// });

@@ -2,7 +2,7 @@ const smsDiscordDal=require('../dataaccesslayer/smsDiscordDal');
 
 const sendSms = async (req,res)=>{
     
-  const sendSms = await smsDiscordDal.sendSms();
+  const sendSms = await smsDiscordDal.sendSms(req);
   return (sendSms);
 }
 

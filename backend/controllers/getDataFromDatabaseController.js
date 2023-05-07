@@ -26,7 +26,6 @@ const getPepperData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane pepper: ', data.toString());
-                console.log('\n\n');
                 numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
             });
             
@@ -36,7 +35,7 @@ const getPepperData = (req,res,website) => {
 
             python.on('close', (code) => {
                 if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.log(`Proces zakończony z kodem: ${code} - błąd`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
             });
         
             python.on('exit', async function(code) {
@@ -51,7 +50,7 @@ const getPepperData = (req,res,website) => {
 
                 resolveFunc(pepperArticles);
                 
-                console.log("Wysłałem dane serwisu PEPPER!\n");
+                console.log("Wysłano dane serwisu PEPPER!\n");
                 arrOfData.push(pepperArticles);
             })
         });
@@ -80,7 +79,6 @@ const getOlxData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane olx: ', data.toString());
-                console.log('\n\n');
                 numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
             });
             
@@ -90,7 +88,7 @@ const getOlxData = (req,res,website) => {
 
             python.on('close', (code) => {
                 if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.log(`Proces zakończony z kodem: ${code} - błąd`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
             });
         
             python.on('exit', async function(code) {
@@ -105,7 +103,7 @@ const getOlxData = (req,res,website) => {
 
                 resolveFunc(olxArticles);
                 
-                console.log("Wysłałem dane serwisu OLX!\n");
+                console.log("Wysłano dane serwisu OLX!\n");
                 arrOfData.push(olxArticles);
             })
         });
@@ -134,7 +132,6 @@ const getAllegroData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane allegro: ', data.toString());
-                console.log('\n\n');
                 numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
             });
             
@@ -144,7 +141,7 @@ const getAllegroData = (req,res,website) => {
 
             python.on('close', (code) => {
                 if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.log(`Proces zakończony z kodem: ${code} - błąd`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
             });
         
             python.on('exit', async function(code) {
@@ -159,7 +156,7 @@ const getAllegroData = (req,res,website) => {
 
                 resolveFunc(allegroArticles);
                 
-                console.log("Wysłałem dane serwisu Allegro!\n");
+                console.log("Wysłano dane serwisu Allegro!\n");
                 arrOfData.push(allegroArticles);
             })
         });
@@ -188,7 +185,6 @@ const getAmazonData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane amazon: ', data.toString());
-                console.log('\n\n');
                 numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
             });
             
@@ -198,7 +194,7 @@ const getAmazonData = (req,res,website) => {
 
             python.on('close', (code) => {
                 if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.log(`Proces zakończony z kodem: ${code} - błąd`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
             });
         
             python.on('exit', async function(code) {
@@ -213,7 +209,7 @@ const getAmazonData = (req,res,website) => {
 
                 resolveFunc(amazonArticles);
                 
-                console.log("Wysłałem dane serwisu Amazon!\n");
+                console.log("Wysłano dane serwisu Amazon!\n");
                 arrOfData.push(amazonArticles);
             })
         });
@@ -224,6 +220,7 @@ const getAmazonData = (req,res,website) => {
 
 const getDataFromWebsite= async (req,res)=>{
     try{
+
         let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
         websites=websites.flat()
 
@@ -240,21 +237,11 @@ const getDataFromWebsite= async (req,res)=>{
 
         await res.status(201).json({status: 'OK', message: 'Poprawnie pobrano dane!',pepper_data:getDataPepper, olx_data:getDataOlx, amazon_data:getDataAmazon, allegro_data: getDataAllegro })
 
-        console.log("Serwer pobrał dane z bazy danych!")
-
-        // if(!user || user.length >=1 ){
-        //     res.status(401).json({
-        //         message: "Rejestracja nie powiodła się",
-        //         error: errorMess,
-        //     })
-        // }
-        // else{
-        //     res.status(201).json({status: 'OK', message: 'Poprawnie zarejestrowano użytkownika!'});
-        // }
+        console.log("Serwer pobrał dane z bazy danych!");
 
     }
     catch(err){
-        console.log(err)
+        console.error(err)
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
         });

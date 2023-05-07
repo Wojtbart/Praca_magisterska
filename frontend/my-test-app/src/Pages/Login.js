@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import '../style.css'
 
-function LoginForm( ) {
+function LoginForm() {
     
     const navigate = useNavigate();
 	const [login, setLogin] = useState('');

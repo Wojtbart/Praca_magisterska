@@ -2,7 +2,7 @@ const smsDiscordService=require('../servicelayer/smsDiscord_service');
 
 const sendSmsToPhoneController= async (req,res)=>{
     try{
-        const sendSms= await smsDiscordService.sendSms();
+        const sendSms= await smsDiscordService.sendSms(req);
         res.status(201).json({status: 'OK', message: 'Poprawnie wysłano sms!'});
     }
     catch(err){

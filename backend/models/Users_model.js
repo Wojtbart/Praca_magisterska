@@ -68,6 +68,10 @@ const Users_configuration_model = sequelize.define("user_configuration", { //tab
         type: DataTypes.STRING,
         allowNull: true
     },
+    repeat_after_specified_time: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: true

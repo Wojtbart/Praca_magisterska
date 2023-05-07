@@ -3,6 +3,7 @@ import { useEffect, useState, useRef  } from "react";
 import { RiLoginBoxFill, RiMailCheckFill, RiPhoneFill } from "react-icons/ri";
 
 const ConfigurationPage = () => {
+
     const navigate = useNavigate();
 
     const checkList = ["OLX", "Amazon", "Pepper", "Allegro"];
@@ -15,9 +16,8 @@ const ConfigurationPage = () => {
     const [checkedActualOffer, setCheckedActualOffer] = useState(false);
 
     const [checked3, setChecked3] = useState(false);
-    // const [checkedActualOffer, setCheckedActualOffer] = useState(false);
     const [text, setText] = useState("");
-    const [text2, setText2] = useState("");
+    const [text3, setText3] = useState("");
     const actualOfferCheckbox = useRef();
     const timeCheckbox = useRef();
     const minutesCheckbox = useRef();
@@ -25,32 +25,30 @@ const ConfigurationPage = () => {
     const handleCheck = (event) => {
         var updatedList = [...checked];
         if (event.target.checked) {
-          updatedList = [...checked, event.target.value];
+            updatedList = [...checked, event.target.value];
         } else {
-          updatedList.splice(checked.indexOf(event.target.value), 1);
+            updatedList.splice(checked.indexOf(event.target.value), 1);
         }
         setChecked(updatedList);
-      };
+    };
 
-      const handleCheckNotification = (event) => {
+    const handleCheckNotification = (event) => {
         var updatedList = [...checkedNotification];
         if (event.target.checked) {
-          updatedList = [...checkedNotification, event.target.value];
+            updatedList = [...checkedNotification, event.target.value];
         } else {
-          updatedList.splice(checkedNotification.indexOf(event.target.value), 1);
+            updatedList.splice(checkedNotification.indexOf(event.target.value), 1);
         }
         setCheckedNotification(updatedList);
-      };
+    };
 
     const getActualTime= ()=>{
         const today = new Date();
         const time = `${today.getHours()}:${today.getMinutes()}`;
-        console.log(time)
         return time;
     }
       
     const isChecked = (item) =>checked.includes(item) ? "checked-item" : "not-checked-item";
-
     const isCheckedNotifications = (item) =>checkedNotification.includes(item) ? "checked-item" : "not-checked-item";
 
     useEffect(() => {
@@ -59,8 +57,8 @@ const ConfigurationPage = () => {
                 navigate("/");
             }
         };
-
         checkUser();
+
     }, [navigate]);
 
     const handleSignOut = () => {
@@ -69,6 +67,7 @@ const ConfigurationPage = () => {
         localStorage.removeItem("email");
         navigate("/");
     };
+
     const goToDashboardPage = () => navigate("/dashboard");
 
     async function getUser() {
@@ -103,14 +102,10 @@ const ConfigurationPage = () => {
                 const error = (dataFromBackend && dataFromBackend.message) || response.statusText;
                 return Promise.reject(error);
             }
-            console.log(dataFromBackend)
-            if("data" in dataFromBackend){
-                return dataFromBackend.data;
-            } 
-            else{
-                return null;
-            } 
-            
+
+            if("data" in dataFromBackend) return dataFromBackend.data;
+            else return null;
+
         })
         .catch(error => {
             this.setState({ errorMessage: error.toString() });
@@ -129,16 +124,13 @@ const ConfigurationPage = () => {
         })
         .then((res) => res.json())
 		.then((data) => {
-            // if(data.message==='Rejestracja nie powiodła się') alert(data.error);
-            // else {
-				alert("Poprawnie zapisano dane w bazie!");
-                // navigate("/");
-            // }
+            alert("Poprawnie zapisano dane w bazie!");
         })
         .catch((err) => console.error(err));
     }
 
     const handleSubmit = async (e) => {
+
         const arr=checked.concat(checkedNotification);
         if(checked.length===0 || checkedNotification.length===0  ) {
             alert("Wybierz przynajmniej dostepne opcje!")
@@ -147,7 +139,6 @@ const ConfigurationPage = () => {
 
         e.preventDefault()
 
-        
         const obj={
             olx:false,
             amazon:false,
@@ -157,7 +148,8 @@ const ConfigurationPage = () => {
             email:false,
             discord:false,
             aktualna_oferta:false,
-            godzina_maila:'',
+            godzina_maila:null,
+            repeat_after_specified_time:0,
             user_id:0
         }
         let keys = Object.keys(obj);
@@ -169,76 +161,75 @@ const ConfigurationPage = () => {
         }
 
         if(checked2) obj['godzina_maila']=text;
+        if(checked3) obj['repeat_after_specified_time']=parseInt(text3);
         if(checkedActualOffer) obj['aktualna_oferta']=true;
 
         obj['user_id']=await getUser();
-        const userConfig =await  getUserConfiguration()
-        console.log(userConfig)
+        await getUserConfiguration();
+
         saveConfigurationToDatabase(obj);
     }
     
     return (
         <>
-        <div>
-            <nav className="bg-dark navbar-dark navbar">
-                <div className="col-12 d-flex justify-content-center  text-white">
-                    <h3 className='HeaderTitle' >NOTIFICATIONER</h3>
-                    <button className='signOutBtn' onClick={handleSignOut}>WYLOGUJ SIE</button>
-                </div>
-            </nav>
-
-            <div className="container" > 
-                <section className="description sectionOne">
-                    <div>
-                        <h2>Twoje dane</h2>
-                        <ul> 
-                         <li> <RiLoginBoxFill style={{color: 'black', fontSize: '20px'}} /> Login: <span className="itemData">{localStorage.getItem("login")} </span></li>
-                            <li> <RiMailCheckFill style={{color: 'green', fontSize: '20px'}} />  Adres e-mail: <span className="itemData">{localStorage.getItem("email")}</span></li>
-                            <li> <RiPhoneFill style={{color: 'blue', fontSize: '20px'}} />Telefon: <span className="itemData">{localStorage.getItem("phone")}</span> </li>
-                        </ul>
+            <div>
+                <nav className="bg-dark navbar-dark navbar">
+                    <div className="col-12 d-flex justify-content-center  text-white">
+                        <h3 className='HeaderTitle' >NOTIFICATIONER</h3>
+                        <button className='signOutBtn' onClick={handleSignOut}>WYLOGUJ SIE</button>
                     </div>
-                </section>
+                </nav>
 
-                <section className="description sectionTwo">
-                    <div className="checkList">
-                        <h4>Wybierz witryny z których chcesz pobrać oferty:</h4>
-                        <div className="list-container">
-                            {checkList.map((item, index) => (
-                                <div key={index}>
-                                    <input value={item} type="checkbox" onChange={handleCheck} />
-                                <span className={isChecked(item)}>{item}</span>
-                                </div>
-                            ))}
+                <div className="container" > 
+                    <section className="description sectionOne">
+                        <div>
+                            <h2>Twoje dane</h2>
+                            <ul> 
+                                <li> <RiLoginBoxFill style={{color: 'black', fontSize: '20px'}} /> Login: <span className="itemData">{localStorage.getItem("login")} </span></li>
+                                <li> <RiMailCheckFill style={{color: 'green', fontSize: '20px'}} />  Adres e-mail: <span className="itemData">{localStorage.getItem("email")}</span></li>
+                                <li> <RiPhoneFill style={{color: 'blue', fontSize: '20px'}} />Telefon: <span className="itemData">{localStorage.getItem("phone")}</span> </li>
+                            </ul>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                <section className="description sectionThree">
-                    <div className="checkList">
-                        <h4>Wybierz systemy powiadomień, do których chcesz wysłać wiadomość:</h4>
-                        <div className="list-container">
-                            {notificationSystems.map((item, index) => (
-                                <div key={index}>
-                                    <input value={item} type="checkbox" onChange={handleCheckNotification} />
-                                <span className={isCheckedNotifications(item)}>{item}</span>
-                                </div>
-                            ))}
+                    <section className="description sectionTwo">
+                        <div className="checkList">
+                            <h4>Wybierz witryny z których chcesz pobrać oferty:</h4>
+                            <div className="list-container">
+                                {checkList.map((item, index) => (
+                                    <div key={index}>
+                                        <input value={item} type="checkbox" onChange={handleCheck} />
+                                        <span className={isChecked(item)}>{item}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                <div className="otherCheckboxes">
-                    <label>
-                        
-                        <input
-                        name="input"
-                        type="checkbox"
-                        disabled={false}
-                        value={text2}
-                        ref={actualOfferCheckbox}
-                        checked={checkedActualOffer}
-                        onChange={
-                            (e) => {
+                    <section className="description sectionThree">
+                        <div className="checkList">
+                            <h4>Wybierz systemy powiadomień, do których chcesz wysłać wiadomość:</h4>
+                            <div className="list-container">
+                                {notificationSystems.map((item, index) => (
+                                    <div key={index}>
+                                        <input value={item} type="checkbox" onChange={handleCheckNotification} />
+                                        <span className={isCheckedNotifications(item)}>{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    <div className="otherCheckboxes">
+
+                        <label>
+                            <input
+                            name="input"
+                            type="checkbox"
+                            disabled={false}
+                            ref={actualOfferCheckbox}
+                            checked={checkedActualOffer}
+                            onChange={ (e) => {
                                 if(actualOfferCheckbox.current.checked){
                                     timeCheckbox.current.disabled=true;
                                     minutesCheckbox.current.disabled=true;
@@ -248,94 +239,94 @@ const ConfigurationPage = () => {
                                     minutesCheckbox.current.disabled=false;
                                 }
                                 setCheckedActualOffer(!checkedActualOffer)
-                        }}
-                        />
-                        Aktualne oferty
-                    </label>
+                            }}
+                            />
+                            Aktualne oferty
+                        </label>
 
-                    <label>
-                        <input
-                        name="checkbox"
-                        type="checkbox"
-                        checked={checked2}
-                        ref={timeCheckbox}
-                        onChange={() => {
-                            if(checked2){
-                                setText(getActualTime())
-                            }
+                        <label>
+                            <input
+                            name="checkbox"
+                            type="checkbox"
+                            checked={checked2}
+                            ref={timeCheckbox}
+                            onChange={() => {
+                                if(checked2){
+                                    setText(getActualTime())
+                                }
 
-                            if(timeCheckbox.current.checked){
-                                actualOfferCheckbox.current.disabled=true;
-                                minutesCheckbox.current.disabled=true;
-                            }
-                            else{
-                                actualOfferCheckbox.current.disabled=false;
-                                minutesCheckbox.current.disabled=false;
-                            }
-                            setChecked2(!checked2)
-                        }}
-                        />
-                        Ustaw godzinę wysłania
-                    </label>
+                                if(timeCheckbox.current.checked){
+                                    actualOfferCheckbox.current.disabled=true;
+                                    minutesCheckbox.current.disabled=true;
+                                }
+                                else{
+                                    actualOfferCheckbox.current.disabled=false;
+                                    minutesCheckbox.current.disabled=false;
+                                }
+                                setChecked2(!checked2)
+                            }}
+                            />
+                            Ustaw godzinę wysłania
+                        </label>
 
-                    <label className="timeLabel">
-                        Godzina wysłania:
-                        <input
-                        name="input"
-                        id="timeCheckbox"
-                        type="time"
-                        disabled={!checked2}
-                        value={text}
-                        onChange={e => setText(e.target.value)}
-                        />
-                    </label>
+                        <label className="timeLabel">
+                            Godzina wysłania:
+                            <input
+                            name="input"
+                            id="timeCheckbox"
+                            type="time"
+                            disabled={!checked2}
+                            value={text}
+                            onChange={e => setText(e.target.value)}
+                            />
+                        </label>
 
-                    <label>
-                        <input
-                        name="checkbox"
-                        type="checkbox"
-                        checked={checked3}
-                        ref={minutesCheckbox}
-                        onChange={() => {
-                            // if(checked3){
-                            //     setText(getActualTime())
-                            // }
+                        <label>
+                            <input
+                            name="checkbox"
+                            type="checkbox"
+                            checked={checked3}
+                            ref={minutesCheckbox}
+                            onChange={() => {
 
-                            if(minutesCheckbox.current.checked){
-                                actualOfferCheckbox.current.disabled=true;
-                                timeCheckbox.current.disabled=true;
-                            }
-                            else{
-                                actualOfferCheckbox.current.disabled=false;
-                                timeCheckbox.current.disabled=false;
-                            }
-                            setChecked3(!checked3)
-                        }}
-                        />
-                        Co ile minut chcesz wysyłać wiadomości
-                    </label>
+                                if(minutesCheckbox.current.checked){
+                                    actualOfferCheckbox.current.disabled=true;
+                                    timeCheckbox.current.disabled=true;
+                                }
+                                else{
+                                    actualOfferCheckbox.current.disabled=false;
+                                    timeCheckbox.current.disabled=false;
+                                }
+                                setChecked3(!checked3)
+                            }}
+                            />
+                            Co ile minut chcesz wysyłać wiadomości
+                        </label>
 
-                    <label className="timeLabel">
-                        Co ile minut:
-                        <input
-                        name="input"
-                        id="minuteCheckbox"
-                        type="number"
-                        disabled={!checked3}
-                        value={text}
-                        onChange={e => setText(e.target.value)}
-                        />
-                    </label>
+                        <label className="timeLabel">
+                            Co ile minut:
+                            <input
+                            name="input"
+                            id="minuteCheckbox"
+                            type="number"
+                            min={1}
+                            max={59}
+                            disabled={!checked3}
+                            value={text3}
+                            required
+                            onChange={e => setText3(e.target.value)}
+                            />
+                        </label>
+
+                    </div>
+                    
+                    <div>
+                        <button className="btn upperButton" onClick={handleSubmit}>Zapisz konfigurację</button>
+                        <button className="btn backDashboard" onClick={goToDashboardPage}>Powrót do panelu</button>
+                    </div>
 
                 </div>
-                
-                <div>
-                    <button className="btn upperButton" onClick={handleSubmit}>Zapisz konfigurację</button>
-                    <button className="btn backDashboard" onClick={goToDashboardPage}>Powrót do panelu</button>
-                </div>
-
             </div>
-        </div>
         </>
     ); 
 };

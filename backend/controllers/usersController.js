@@ -32,7 +32,7 @@ const registerUser= async(req,res)=>{
 
     }
     catch(err){
-        console.log(err)
+        console.error(err)
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie rejestrowania użytkownika!"
         });
@@ -47,7 +47,6 @@ const getUser= async(req,res)=>{
             console.log('Nie znaleziono!');
             res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
         } else {
-            console.log("Znalazłem")
             res.status(201).json({status: 'OK', message: `Znaleziono użytkownika o loginie: ${getUser.login}`,user_id:getUser.id});
         } 
     }
@@ -62,31 +61,27 @@ const getConfiguration= async(req,res)=>{
     let userek=null
     try{
         const getCOnfigurationUser= await usersService.getUser(req.params.login);
-        // console.log(getCOnfigurationUser.id)
         try{
-            // let {email} =  req.body;
     
             userek= await Users.Users_configuration_model.findOne({
                 where: {
                     user_id: getCOnfigurationUser.id
                 }
             }); 
-            // console.log("User",userek)  
-            console.log("jestem w zapisywaniu konfigu\n\n") 
         }
         catch(err){
-            console.log(err);
+            console.error(err);
         } 
 
         if (getCOnfigurationUser === null) {
-            console.log('Nie znaleziono!');
+            console.log('Nie znaleziono konfiguracji użytkownika!');
             res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
         } else {
             res.status(201).json({status: 'OK', message: `Udalo sie`,data:userek});
         } 
     }
     catch(err){
-        console.log(err)
+        console.error(err)
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
         });
@@ -126,7 +121,7 @@ const login = async (req,res)=>{
 }
 
 const saveConfiguration = async (req,res)=>{
-    const { olx, amazon, allegro,pepper, sms,discord,email,aktualna_oferta,godzina_maila, user_id } = req.body;
+    const { olx, amazon, allegro,pepper, sms,discord,email,aktualna_oferta,godzina_maila, repeat_after_specified_time, user_id } = req.body;
 
     try {
         // const user = await Users.findOne({ where: { login: login, password:password } });
@@ -158,22 +153,25 @@ const saveConfiguration = async (req,res)=>{
             //     })
             // }
             let updated;
-            configUser = await Users.Users_configuration_model.findAll({
+            let configUser = await Users.Users_configuration_model.findAll({
                 where:{
                     user_id: user_id
                 }
             })
-            if(configUser != null){
-                updated=  Users.Users_configuration_model.update(
-                    { olx:olx,
-                        amazon:amazon,
-                        allegro:allegro,
-                        pepper: pepper,
-                        sms:sms,
-                        email:email,
-                        discord:discord,
-                        aktualna_oferta:aktualna_oferta,
-                        godzina_maila:godzina_maila
+
+            if( Object.keys(configUser).length!==0 ){
+
+                updated=  Users.Users_configuration_model.update({ 
+                    olx:olx,
+                    amazon:amazon,
+                    allegro:allegro,
+                    pepper: pepper,
+                    sms:sms,
+                    email:email,
+                    discord:discord,
+                    aktualna_oferta:aktualna_oferta,
+                    repeat_after_specified_time: repeat_after_specified_time,
+                    godzina_maila:godzina_maila
                     },
                     { where: { user_id: user_id } }
                 );
@@ -189,13 +187,14 @@ const saveConfiguration = async (req,res)=>{
                 discord:discord,
                 aktualna_oferta:aktualna_oferta,
                 godzina_maila:godzina_maila,
-                user_id:4
+                repeat_after_specified_time: repeat_after_specified_time,
+                user_id:user_id
             });
             }
 
         
            return  res.status(200).json({
-                message: "Udało się poprawnie zapisać dane!!",
+                message: "Udało się poprawnie zapisać dane!!",data:updated,
             })
     
         

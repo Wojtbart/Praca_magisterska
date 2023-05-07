@@ -1,11 +1,14 @@
 const Users=require('../models/Users_model');
 const ini = require('ini');
 const fs = require('fs');
+const path = require("path")
 const config = ini.parse(fs.readFileSync('../config.ini','utf-8'));
 const nodemailer = require('nodemailer');
+const handlebars = require("handlebars");
 
 const sendMail = async (req,res)=>{
-    let user=null;
+    let receiver=null;  
+    let {user,data}=req.body;
 
     try {
 
@@ -22,36 +25,41 @@ const sendMail = async (req,res)=>{
     
         mailTransporter.verify(function (error, success) {
             if (error) {
-                console.log(error);
+                console.error(error);
             } else {
                 console.log("Server SMTP jest gotowy na przyjmowanie wiadomości!");
             }
         });
 
-        user= await Users.findOne({
+        receiver= await Users.Users_models.findOne({
             where: {
-                login: "test" //TO DO pobierac login uzytkownika
+                id: parseInt(user) 
             }
         }); 
-    
-        let info =  {
-            from: config.email.mailSender, // sender address '"Wojtek TEST 👻"shipgamesender@gmail.com'
-            to: user.email, 
-            subject: "Oferty sprzedażowe - mailing",
-            text: "Test mail sprzedażowego", // plain text body // html: "<b>Hello world?</b>", // html body
+        
+        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../templates/template.hbs"), "utf8")
+
+        const tableTemplate = handlebars.compile(emailTemplateSource);
+
+        const htmlToSend = tableTemplate({ arrayOlx: data.olx_data, arrayPepper: data.pepper_data, arrayAmazon: data.amazon_data, arrayAllegro: data.allegro_data });
+
+        let mailOptions =  {
+            from: config.email.mailSender, 
+            to: receiver.email, 
+            subject: "Oferty sprzedażowe - mailing!",
+            html: htmlToSend
         };
-    
-        mailTransporter.sendMail(info, function (err, data) {
+
+        mailTransporter.sendMail(mailOptions, function (err, data) {
             if (err) {
-                console.log("Wystąpił błąd:", err.message);
+                console.error("Wystąpił błąd:", err.message);
             } else {
                 console.log("---------------------");
                 console.log("Email został wysłany prawidłowo, komunikat: "  + data.response);
             }
         });
-
     } catch (err) {
-       console.log(err);
+       console.error(err);
     }
 }
 

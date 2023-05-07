@@ -40,7 +40,7 @@ const registerUser = async (req,res)=>{
         });
 
     } catch (err) {
-       console.log(err);
+       console.error(err);
     }
 
     return usersList;
@@ -50,8 +50,6 @@ const getUser = async (login)=>{
     let user=null;
 
     try{
-        // let {email} =  req.body;
-
         user= await Users.Users_models.findOne({
             where: {
                 login: login
@@ -59,7 +57,7 @@ const getUser = async (login)=>{
         });   
     }
     catch(err){
-        console.log(err);
+        console.error(err);
     } 
     return user;
 }

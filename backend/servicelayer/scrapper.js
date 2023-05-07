@@ -42,5 +42,5 @@ const oneOLXArticle=  async () =>{
         console.log(movie instanceof OLX_articles_models); // true
         console.log(movie.Tytul); // 'My Title'
       }
-
-oneOLXArticle();
+}
+// oneOLXArticle();

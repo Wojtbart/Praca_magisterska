@@ -2,7 +2,7 @@ const emailDal=require('../dataaccesslayer/emailsDal');
 
 const sendMailService = async (req,res)=>{
     
-  const sendMail = await emailDal.sendMail();
+  const sendMail = await emailDal.sendMail(req);
   return (sendMail);
 }
 

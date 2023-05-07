@@ -4,10 +4,14 @@ from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
 import sys
 import urllib3
+import configparser
 urllib3.disable_warnings()
 
-CLIENT_ID = "9096efe8383644ee91a44d1de4c637f6"  # Client_ID aplikacji
-CLIENT_SECRET = "mDwdm9XPlp0EElARDCOFkrTxbjZGG3x8dEb1tGC2MmEgSB6fWlKtOY9NmkuFQe1p" #Client_Secret aplikacji
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+CLIENT_ID=config['allegro']['CLIENT_ID']
+CLIENT_SECRET=config['allegro']['CLIENT_SECRET']
 TOKEN_URL = "https://allegro.pl.allegrosandbox.pl/auth/oauth/token"
 COUNTER=0
 
@@ -40,9 +44,8 @@ def insert_record(cnx, product_name, image_link, has_promotion, quantity, price_
     try:
         cursor = cnx.cursor()
         cursor.execute(query, args)
-
         cnx.commit()
-        # print("Wykonany insert do bazy danych!")
+
         COUNTER+=1
     except Error as error:
         print("Błąd przy funkcji insert!! ",error)
@@ -63,13 +66,10 @@ def get_data_and_insert(cnx,object_list, key_name):
             for subitem in item['images']:
                 if 'url' in subitem :
                     item['images']=subitem['url']
-        # print("ITEM",item)
 
         insert_record(cnx,item["name"],item["images"], item['promotion']['emphasized'], item["stock"]['available'], item['sellingMode']['price']['amount'],
                         item['sellingMode']['popularity'],item['delivery']['lowestPrice']['amount'], item["seller"]["login"])
-                        
-                # print(item["name"], item["images"], item['promotion']['emphasized'], item["stock"]['available'], item["seller"]["login"],item['sellingMode']['popularity'],
-                #     item['sellingMode']['price']['amount'], item['delivery']['lowestPrice']['amount'])
+                    
 
 def find_offers(token,phrase,limit):
     try:
@@ -89,7 +89,6 @@ def find_offers(token,phrase,limit):
 
             try:
 
-                # print('Łączenie się z bazą danych MySQL...')
                 cnx = MySQLConnection(**db_config)
                 if (cnx.is_connected()):
                     print('Utworzono połączenie z bazą danych')
@@ -125,4 +124,4 @@ if __name__ == "__main__":
         for i in range(1, n):
             phrase+=sys.argv[i] 
     find_offers( access_token, phrase, 100)
-    print(COUNTER)
+    print("Liczba rekordow:",COUNTER)
