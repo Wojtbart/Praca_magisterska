@@ -11,7 +11,7 @@ const twilio = require('twilio')(accountSid, authToken);
 // SMS
 async function sendSMStoPhone(textMessage) {
   sentFrom=config.tokens.TWILIO_NUMBER;
-  sentTo=config.tokens.PERSONAL_NUMBER; //konto trial umożliwia tylko wysyłąnie smsów do siebie
+  sentTo=config.tokens.PERSONAL_NUMBER; //konto trial umożliwia tylko wysyłanie smsów do siebie
 
   //TU można było zrobić validację numerów, gdyby konto było płatne
   //  twilio.validationRequests

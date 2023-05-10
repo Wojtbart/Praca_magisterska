@@ -1,7 +1,7 @@
 const {Sequelize, DataTypes} = require("sequelize");
 const sequelize =require('./database').sequelize
 
-const Amazon_articles_models = sequelize.define("artykuly3", { //table olx_articles
+const Amazon_articles_models = sequelize.define("artykuly3", { 
     Tytul: {
         type: DataTypes.STRING,
         allowNull: false
@@ -11,23 +11,23 @@ const Amazon_articles_models = sequelize.define("artykuly3", { //table olx_artic
         allowNull: false
     },
     Zdjecie: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.STRING,
         allowNull: true
     },
     Ocena: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     Ocena_w_gwiazdkach: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     Dostawa: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     Czy_darmowa_dostawa: {
-        type: DataTypes.DECIMAL(10,2),
+        type: DataTypes.STRING,
         allowNull: false
     },
     Cena_oryginalna: {
@@ -54,13 +54,5 @@ const Amazon_articles_models = sequelize.define("artykuly3", { //table olx_artic
     tableName: 'artykuly3',
     timestamps: false
 });
-
-sequelize.sync();
-
-// sequelize.sync().then(() => {
-//     console.log('Stworzono tabele artykuly_olx!');
-// }).catch((error) => {
-//     console.error('Nie można stworzyć tabeli : ', error);
-// });
 
 module.exports=Amazon_articles_models;

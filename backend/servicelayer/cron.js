@@ -9,6 +9,7 @@ const urlDiscord = `http://localhost:9005/discord`;
 let sendSms=false;
 let sendEmail=false;
 let sendDiscordMessage=false;
+let arrOfJobs=[];
 
 const sendNotificationJob = async (req,res)=>{
 
@@ -49,6 +50,13 @@ const sendNotificationJob = async (req,res)=>{
       if (el==='email') sendEmail=true;
       if (el==='sms') sendSms=true;
       if (el==='discord') sendDiscordMessage=true;
+    })
+
+    arrOfJobs.forEach(elem=>{
+      if(elem[1]===user_id){
+        elem[0].stop();
+        console.log("Job został zatrzymany dla użytkownika "+user_id);
+      }
     })
 
     if(godzina_maila !== null ) {
@@ -111,6 +119,8 @@ const sendNotificationJob = async (req,res)=>{
           scheduled: true,
           timezone: "Europe/Warsaw"
         });
+
+        arrOfJobs.push([job,user_id]);
       }
       else{
         throw new Error("Niepoprawnie ustawiony cron do wykonywania zadań!");
@@ -122,7 +132,7 @@ const sendNotificationJob = async (req,res)=>{
       var valid = cron.validate(cronStr);
 
       if(valid){
-        const job =  cron.schedule(cronStr, async () => {
+         const job =  cron.schedule(cronStr, async () => {
 
           const getDataFromMethod= await axios.post(url, objData)
           .then((res) => {
@@ -168,10 +178,25 @@ const sendNotificationJob = async (req,res)=>{
             });
           }
 
-        },{
-          scheduled: true,
-          timezone: "Europe/Warsaw"
-        });
+         },{
+           scheduled: true,
+           timezone: "Europe/Warsaw"
+         });
+        // console.log("jestem tutaj 1");
+        // console.log(job);
+        // console.log("jestem tutaj 2");
+        // console.log("name",job.options);
+        // console.log("name",job.options.name);
+        // console.log("TASK  scheduled",job.ScheduledTask);
+
+        // for (let item in job){
+        //   console.log(item)
+        //   console.log("\n\n")
+        // }
+
+
+        arrOfJobs.push([job,user_id]);
+        // console.log(arrOfJobs)
 
       }
       else{

@@ -1,7 +1,7 @@
 const {Sequelize, DataTypes} = require("sequelize");
 const sequelize =require('./database').sequelize
 
-const Allegro_articles_models = sequelize.define("artykuly_allegro", { //table olx_articles
+const Allegro_articles_models = sequelize.define("artykuly_allegro", { 
     product_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -38,13 +38,5 @@ const Allegro_articles_models = sequelize.define("artykuly_allegro", { //table o
     tableName: 'artykuly_allegro',
     timestamps: false
 });
-
-sequelize.sync();
-
-// sequelize.sync().then(() => {
-//     console.log('Stworzono tabele artykuly_olx!');
-// }).catch((error) => {
-//     console.error('Nie można stworzyć tabeli : ', error);
-// });
 
 module.exports=Allegro_articles_models;

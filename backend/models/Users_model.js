@@ -1,7 +1,7 @@
 const {Sequelize, DataTypes} = require("sequelize");
 const sequelize =require('./database').sequelize;
 
-const Users_models = sequelize.define("users", { //table users
+const Users_models = sequelize.define("users", { 
     name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -31,7 +31,7 @@ const Users_models = sequelize.define("users", { //table users
     timestamps: false
 });
 
-const Users_configuration_model = sequelize.define("user_configuration", { //table users
+const Users_configuration_model = sequelize.define("user_configuration", { 
     olx: {
         type: DataTypes.BOOLEAN,
         allowNull: true
@@ -82,14 +82,6 @@ const Users_configuration_model = sequelize.define("user_configuration", { //tab
 });
 Users_models.hasOne(Users_configuration_model,{foreignKey: {
     name: 'user_id'
-  }});
-
-sequelize.sync();
-
-// sequelize.sync().then(() => {
-//     console.log('Stworzono tabele artykuly_olx!');
-// }).catch((error) => {
-//     console.error('Nie można stworzyć tabeli : ', error);
-// });
+}});
 
 module.exports={Users_models,Users_configuration_model};

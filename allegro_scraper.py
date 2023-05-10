@@ -6,9 +6,13 @@ import sys
 import urllib3
 import configparser
 urllib3.disable_warnings()
+import os
+
+# tutaj sciezke muszę podawać na sztywno
+path=os.path.dirname(os.path.abspath(__file__))+'\config.ini'
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read(path)
 
 CLIENT_ID=config['allegro']['CLIENT_ID']
 CLIENT_SECRET=config['allegro']['CLIENT_SECRET']

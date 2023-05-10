@@ -20,5 +20,6 @@ sequelize.authenticate().then(() => {
 }).catch((error) => {
   console.error('Nie można połączyć się z bazą danych: ', error);
 });
+sequelize.sync();
 
 module.exports={sequelize};

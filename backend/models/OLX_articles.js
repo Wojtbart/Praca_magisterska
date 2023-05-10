@@ -1,7 +1,7 @@
 const {Sequelize, DataTypes} = require("sequelize");
 const sequelize =require('./database').sequelize
 
-const OLX_articles_models = sequelize.define("artykuly_olx", { //table olx_articles
+const OLX_articles_models = sequelize.define("artykuly_olx", { 
     Tytul: {
         type: DataTypes.STRING,
         allowNull: false
@@ -34,13 +34,5 @@ const OLX_articles_models = sequelize.define("artykuly_olx", { //table olx_artic
     tableName: 'artykuly_olx',
     timestamps: false
 });
-
-sequelize.sync();
-
-// sequelize.sync().then(() => {
-//     console.log('Stworzono tabele artykuly_olx!');
-// }).catch((error) => {
-//     console.error('Nie można stworzyć tabeli : ', error);
-// });
 
 module.exports=OLX_articles_models;

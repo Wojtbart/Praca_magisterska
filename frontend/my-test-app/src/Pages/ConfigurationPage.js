@@ -22,6 +22,12 @@ const ConfigurationPage = () => {
     const timeCheckbox = useRef();
     const minutesCheckbox = useRef();
 
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+
+    
+    const [configuration, setConfiguration] = useState([]);
+
     const handleCheck = (event) => {
         var updatedList = [...checked];
         if (event.target.checked) {
@@ -89,8 +95,12 @@ const ConfigurationPage = () => {
             console.error('Wystąpił błąd!', error);
         });
     }
+     useEffect(() => {
+         getUserConfiguration();
+      }, []);
 
     async function getUserConfiguration() {
+        var configrationList = [];
         
         return fetch(`http://localhost:9005/getConfiguration/${localStorage.getItem("login")}`, {
             method: 'GET'
@@ -103,8 +113,26 @@ const ConfigurationPage = () => {
                 return Promise.reject(error);
             }
 
-            if("data" in dataFromBackend) return dataFromBackend.data;
-            else return null;
+            for (let item in dataFromBackend.data){
+                // console.error("wsztystko",item);
+                if (dataFromBackend.data[item] && dataFromBackend.data[item]!==0 && item!=="id" && item!=="user_id" ){
+                    // console.log("key:",item);
+                    // console.log("value:",dataFromBackend.data[item]);
+                    if(item==='repeat_after_specified_time'){
+                        configrationList.push("powtórz wysyłanie co "+dataFromBackend.data[item]+" min");
+                    }
+                    else if(item==='godzina_maila'){
+                        configrationList.push("wiadomości wysyłane o "+dataFromBackend.data[item]);
+                    }
+                    else configrationList.push(item+", ");
+                }
+            }
+            configrationList[configrationList.length-1]=configrationList[configrationList.length-1].replace(/,\s*$/, "");
+            setConfiguration(configrationList);
+            // console.log(dataFromBackend.data)
+            // if("data" in dataFromBackend) return dataFromBackend.data;
+            // else return null;
+            
 
         })
         .catch(error => {
@@ -124,7 +152,9 @@ const ConfigurationPage = () => {
         })
         .then((res) => res.json())
 		.then((data) => {
-            alert("Poprawnie zapisano dane w bazie!");
+            // alert("Poprawnie zapisano dane w bazie!");
+            setSuccess("Poprawnie zapisano dane w bazie!");
+            // dodać logowanie
         })
         .catch((err) => console.error(err));
     }
@@ -133,7 +163,8 @@ const ConfigurationPage = () => {
 
         const arr=checked.concat(checkedNotification);
         if(checked.length===0 || checkedNotification.length===0  ) {
-            alert("Wybierz przynajmniej dostepne opcje!")
+            // alert("Wybierz dostepne opcje!")
+            setError("Wybierz dostepne opcje!");
             return;
         }
 
@@ -168,6 +199,7 @@ const ConfigurationPage = () => {
         await getUserConfiguration();
 
         saveConfigurationToDatabase(obj);
+        window.location.reload(true);
     }
     
     return (
@@ -188,6 +220,7 @@ const ConfigurationPage = () => {
                                 <li> <RiLoginBoxFill style={{color: 'black', fontSize: '20px'}} /> Login: <span className="itemData">{localStorage.getItem("login")} </span></li>
                                 <li> <RiMailCheckFill style={{color: 'green', fontSize: '20px'}} />  Adres e-mail: <span className="itemData">{localStorage.getItem("email")}</span></li>
                                 <li> <RiPhoneFill style={{color: 'blue', fontSize: '20px'}} />Telefon: <span className="itemData">{localStorage.getItem("phone")}</span> </li>
+                                <li > Ustawienia: <span className="itemData yourSettings">{configuration}</span> </li>
                             </ul>
                         </div>
                     </section>
@@ -200,20 +233,6 @@ const ConfigurationPage = () => {
                                     <div key={index}>
                                         <input value={item} type="checkbox" onChange={handleCheck} />
                                         <span className={isChecked(item)}>{item}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className="description sectionThree">
-                        <div className="checkList">
-                            <h4>Wybierz systemy powiadomień, do których chcesz wysłać wiadomość:</h4>
-                            <div className="list-container">
-                                {notificationSystems.map((item, index) => (
-                                    <div key={index}>
-                                        <input value={item} type="checkbox" onChange={handleCheckNotification} />
-                                        <span className={isCheckedNotifications(item)}>{item}</span>
                                     </div>
                                 ))}
                             </div>
@@ -319,9 +338,25 @@ const ConfigurationPage = () => {
                         </label>
 
                     </div>
+
+                    <section className="description sectionThree">
+                        <div className="checkList">
+                            <h4>Wybierz systemy powiadomień, do których chcesz wysłać wiadomość:</h4>
+                            <div className="list-container">
+                                {notificationSystems.map((item, index) => (
+                                    <div key={index}>
+                                        <input value={item} type="checkbox" onChange={handleCheckNotification} />
+                                        <span className={isCheckedNotifications(item)}>{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
                     
                     <div>
-                        <button className="btn upperButton" onClick={handleSubmit}>Zapisz konfigurację</button>
+                        <p className="error-message-configuration">{error}</p>
+                        <p className="succesfull-message">{success}</p>
+                        <button className="btn upperButton" type="button" onClick={handleSubmit}>Zapisz konfigurację</button>
                         <button className="btn backDashboard" onClick={goToDashboardPage}>Powrót do panelu</button>
                     </div>
 

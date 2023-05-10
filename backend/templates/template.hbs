@@ -203,6 +203,7 @@
           <tbody>
             {{#each arrayPepper}}
               <tr>
+                {{!-- <th>{{#if_eq (or (eq this.Tytul '') (eq this.Tytul null))}}BOOM{{else}}BAMM{{/if_eq}}</th> --}}
                 <th>{{this.Tytul}}</th>
                 <td>{{this.Cena_oryginalna}}</td>
                 <td>{{this.Cena_promocyjna}}</td>
@@ -216,6 +217,18 @@
                 <td >{{this.ilosc_komentarzy}}</td>
                 <td >{{this.uzytkownik_wystawiajacy}}</td>
               </tr>
+
+              <td >{item.Cena_oryginalna===''|| !item.Cena_oryginalna  ? 'BRAK' : item.Cena_oryginalna}</td>
+                            <td >{item.Cena_promocyjna===''|| !item.Cena_promocyjna  ? 'BRAK' : item.Cena_promocyjna}</td>
+                            <td >{item.Czy_promocja_trwa===''|| !item.Czy_promocja_trwa  ? 'TAK' : item.Czy_promocja_trwa}</td>
+                            <td >{item.Dostawa===''|| !item.Dostawa  ? 'BRAK' : item.Dostawa}</td>
+                            <td className="description_product">{item.Opis===''|| !item.Opis  ? 'BRAK' : item.Opis}</td>
+                            <td >{item.Link===''|| !item.Link  ? 'BRAK' : <a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Link}>Link</a>}</td>
+                            <td >{item.Obnizka_w_procentach===''|| !item.Obnizka_w_procentach  ? 'BRAK' : item.Obnizka_w_procentach}</td>
+                            <td >{item.Opublikowano}</td>
+                            <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Zdjecie} >Zdjęcie</a></td>
+                            <td >{item.ilosc_komentarzy===''|| !item.ilosc_komentarzy  ? 'BRAK' : item.ilosc_komentarzy}</td>
+                            <td >{item.uzytkownik_wystawiajacy}</td> 
             {{/each}}
           </tbody>
         </table>

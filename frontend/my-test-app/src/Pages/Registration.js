@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import '../style.css';
 import { useNavigate  } from 'react-router-dom';
+import TextField from "@mui/material/TextField";
 
 function RegistrationForm() {
 	const navigate = useNavigate();
@@ -12,6 +13,8 @@ function RegistrationForm() {
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [phone, setPhone] = useState('');
 	const [login, setLogin] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
+	const [succesfullMessage, setSuccesfullMessage] = useState('');
 
 	const onInputChange = e => {
 		handleInputChange(e)
@@ -112,10 +115,9 @@ function RegistrationForm() {
 		.then((res) => res.json())
 		.then((data) => {
 
-			if(data.message==='Rejestracja nie powiodła się') alert(data.error);
+			if(data.message==='Rejestracja nie powiodła się') setErrorMessage(data.error);
             else {
-				alert("Konto zostało utworzone pomyślnie!");
-                navigate("/");
+				setSuccesfullMessage("Konto zostało utworzone pomyślnie!");
             }
         })
         .catch((err) => console.error(err));	
@@ -127,99 +129,119 @@ function RegistrationForm() {
 	<>
 		<form onSubmit={handleSubmit} className="form">
 			<h2 className='formTitle'>REJESTRACJA</h2>
-
+			
 			<div className="form-body">
-
+				<p className="error-message first-error">{errorMessage}</p>
 				<div className="login">
-					<label className="form__label" htmlFor="login">Login</label>
-					<input
-						type="text"
-						className="form__input"
+					<TextField
 						id="login"
-						minLength={5}
-						required
+						type="text"
+						variant="outlined"
+						name="Login"
 						value={login == null ? '' : login}
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						required
+						inputProps={{ minLength: 5 }}
+						className="form__input"
+						label="Login"
 					/>
 				</div>
 
 				<div className="username">
-					<label className="form__label" htmlFor="name">Imię</label>
-					<input
+					<TextField
 						type="text"
 						className="form__input"
 						id="name"
+						variant="outlined"
 						value={name == null ? '' : name}
 						required
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						name="Name"
+						label="Imię"
 					/>
 				</div>
 
 				<div className="surname">
-					<label className="form__label" htmlFor="surname">Nazwisko</label>
-					<input
+					<TextField
 						type="text"
 						className="form__input"
 						id="surname"
+						variant="outlined"
 						value={surname == null ? '' : surname}
 						required
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						name="Surname"
+						label="Nazwisko"
 					/>
 				</div>
 
 				<div className="email">
-					<label className="form__label" htmlFor="email">E-mail</label>
-					<input
+					<TextField
 						type="email"
 						className="form__input"
 						id="email"
-						name='email'
-						required
-						pattern='^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$'
+						variant="outlined"
+						inputProps={{ pattern: "^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" }}
 						value={email == null ? '' : email}
+						required
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						name="email"
+						label="Email"
 					/>
 					<p className="error-message">{formError.email}</p>
 				</div>
 
 				<div className="password">
-					<label className="form__label" htmlFor="password">Hasło</label>
-					<input
-						type="password"
-						className="form__input"
+					<TextField
 						id="password"
-						minLength={8}		
-						required			
+						type="password"
+						variant="outlined"
+						name="password"
 						value={password == null ? '' : password}
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						required
+						inputProps={{ minLength: 8 }}
+						className="form__input"
+						label="Hasło"
 					/>
 					<p className="error-message">{formError.password}</p>
 				</div>
 
 				<div className="confirm-password">
-					<label className="form__label" htmlFor="confirmPassword">Potwierdź hasło</label>
-					<input
+					<TextField
 						type="password"
 						className="form__input"
 						id="confirmPassword"
-						minLength={8}	
-						required
+						variant="outlined"
 						value={confirmPassword == null ? '' : confirmPassword}
+						required
 						onChange={(event) => {onInputChange(event)}}
+						inputProps={{ minLength: 8 }}
+						fullWidth
+						name="confirmPassword"
+						label="Potwierdż hasło"
 					/>
 					<p className="error-message">{formError.confirmPassword}</p>
 				</div>
 
 				<div className="phone">
-					<label className="form__label" htmlFor="phone">Telefon (+48)</label>
-					<input
+					<TextField
 						type="tel"
 						className="form__input"
 						id="phone"
-						pattern="[+]{1}[0-9]{11,14}" 
-						required
+						variant="outlined"
+						inputProps={{ pattern: "[+]{1}[0-9]{11,14}" }}
 						value={phone == null ? '' : phone}
+						required
 						onChange={(event) => {onInputChange(event)}}
+						fullWidth
+						name="phone"
+						label="Numer telefonu (wraz z +48)"
 					/>
 				</div>
 			</div>
@@ -227,6 +249,7 @@ function RegistrationForm() {
 			<div className="footer">
 				<button type="submit"  className="btn">Zarejestruj</button>
 			</div>
+			<p className="succesfull-message">{succesfullMessage}</p>
 			<p className='link'>
 				Masz już konto?{" "}
 				<span className='linkBtn' onClick={gotoLoginPage}>Zaloguj się</span>
