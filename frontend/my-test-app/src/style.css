@@ -1,28 +1,30 @@
 body{
-  /* background-image: linear-gradient( 95.2deg, rgba(173,252,234,1) 26.8%, rgba(192,229,246,1) 64% ); */
   background-image: url("image.jpeg");
   background-size: cover;
   font-family: sans-serif;
 }
+
 h3{
   text-align: center;
 }
+
+.dashboard{
+  display: "flex"; 
+  flex-direction: "column";
+  text-align: center;
+}
+
 /* FORMULARZE */
 .form{
   background-color: white;
   border-radius: 5px;
-  width: 550px;
+  width: 30%;
   margin: 20px auto;
   padding: 20px;
 }
 
-.form-body{
-  /* padding: 20px 10px; */
-  /* margin-left:4rem; */
-}
-
 .form-body > *{
-    padding: 5px;
+  padding: 5px;
 }
 
 .form__label{
@@ -46,10 +48,10 @@ h3{
 
 /* PRZYCISKI */
 .btn{
-    border: 1px solid black;
-    font-family: 'Nunito', sans-serif;
-    background-color:  rgb(2, 122, 197);
-    color: white;
+  border: 1px solid black;
+  font-family: 'Nunito', sans-serif;
+  background-color:  rgb(2, 122, 197);
+  color: white;
 }
 
 .btnLogin{
@@ -57,6 +59,7 @@ h3{
   border: 1px solid black;
   font-family: 'Nunito', sans-serif;
 }
+
 .btnLogin:hover{
   border: 1px solid black;
   background-color: lightgreen;
@@ -64,41 +67,70 @@ h3{
 }
 
 .btn:hover{
-    border: 1px solid black;
-    /* background-color: lightgreen; */
-    transition: .4s;
-    background-color: rgb(3, 44, 94);
-    box-shadow: rgb(3, 44, 94) 0px 0px 0px 1px;
-    color:white;
+  border: 1px solid black;
+  transition: .4s;
+  background-color: rgb(3, 44, 94);
+  box-shadow: rgb(3, 44, 94) 0px 0px 0px 1px;
+  color:white;
 }
 
-/* LINK */
+.signOutBtn{
+  font-size: .8em;
+  font-family: 'Oswald', sans-serif;
+  position: relative;
+  left: 20rem;
+  bottom: -4px;
+  overflow: hidden;
+  letter-spacing: 3px;
+  transition: opacity .45s;
+  border-radius: 10px;
+}
+.signOutBtn:hover{
+  background-color: forestgreen;
+  transition: .3s;
+}
+.description{
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid black;
+  padding:10px;
+  width:50%;
+  margin: 1.2rem;
+  text-align: center;    
+}
+
+.upperButton{
+  margin:10px;
+}
+
+/* LINKI */
 .link{
-    text-align: center; 
+  text-align: center; 
 }
 .linkBtn{
-    text-align: center; 
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 6px;
+  text-align: center; 
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 6px;
 }
 .linkBtn:hover{
-    cursor: pointer;
-    background-color: rgb(200, 173, 103);
-    transition: .4s;
+  cursor: pointer;
+  background-color: rgb(200, 173, 103);
+  transition: .4s;
 }
 
+/* MESSAGE */
 .error-message{
-    font-size: 0.7rem;
-    font-weight: 500;
-    color: red;
-    margin-top: 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: red;
+  margin-top: 0.2rem;
 }
 
 .error-message-configuration{
-  font-size: 1.7rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: red;
+  color: crimson;
   margin-top: 0.2rem;
   text-align: center;
 }
@@ -112,49 +144,19 @@ h3{
   text-transform: uppercase;
 }
 
-.dashboard{
-    display: "flex"; 
-    flex-direction: "column";
-    text-align: center;
-}
-
-.signOutBtn{
-    font-size: .8em;
-    font-family: 'Oswald', sans-serif;
-    position: relative;
-    left: 20rem;
-    bottom: -4px;
-    overflow: hidden;
-    letter-spacing: 3px;
-    transition: opacity .45s;
-    border-radius: 10px;
-}
-.signOutBtn:hover{
-    background-color: forestgreen;
-    transition: .3s;
-}
-.description{
-    background-color: white;
-    border-radius: 10px;
-    border: 1px solid black;
-    padding:10px;
-    width:50%;
-    margin: 1.2rem;
-    text-align: center;    
-}
 ul{
-    list-style: none;
-    padding: 5px;
+  list-style: none;
+  padding: 5px;
 }
 
 .itemData{
-    font-weight: bold;
+  font-weight: bold;
 }
 .container{
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .checked-item,
@@ -163,97 +165,88 @@ ul{
 }
 
 .list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: 20px;
 }
 .searchbarTitle{
-    margin: 10px;
-    font-size: 40px;
-    color: rgb(1, 1, 59);
+  margin: 10px;
+  font-size: 40px;
+  color: rgb(1, 1, 59);
 }
 .search {
-    width: 100%;
-    text-align: center;
-}
-.break {
-    flex-basis: 100%;
+  width: 100%;
+  text-align: center;
 }
 
 .sectionOne{
-    background-color: rgb(228, 176, 176);
+  background-color: rgb(228, 176, 176);
 }
-
 .sectionTwo{
-    background-color: khaki;
+  background-color: khaki;
 }
-
 .sectionThree{
-    background-color:rgb(173, 237, 173);
+  background-color:rgb(173, 237, 173);
 }
 
 
 input[type="checkbox"] {
-    margin: 0;
-    width: 1.15em;
-    height: 1.15em;
-    border: 0.15em solid currentColor;
-    border-radius: 0.15em;
-    transform: translateY(0.1em);
+  margin: 0;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid currentColor;
+  border-radius: 0.15em;
+  transform: translateY(0.1em);
 }
 .otherCheckboxes{
-    background-color: rgb(158, 205, 207);
-    border-radius: 10px;
-    border:2px solid black;
-    text-align: center;
+  background-color: rgb(158, 205, 207);
+  border-radius: 10px;
+  border:2px solid black;
+  text-align: center;
 }
 
 .otherCheckboxes label{
-    display: block;
-    padding: 10px;
+  display: block;
+  padding: 10px;
 }
 
 .otherCheckboxes label input{
-    margin-right: 3px;
+  margin-right: 3px;
 }
 #timeCheckbox{
-    margin-left: 10px;
-}
-
-.upperButton{
-    /* background-color:aliceblue; */
-    margin:10px;
+  margin-left: 10px;
 }
 
 
 .backDashboard{
-    display: inline-block;
-    margin-left: 2em;
-    font-size: 15px;
-    background-color: rgb(163, 89, 232);
+  display: inline-block;
+  margin-left: 2em;
+  font-size: 15px;
+  background-color: rgb(163, 89, 232);
 }
 .HeaderTitle{
     margin-left:5em;
 }
 .goToConfiguration{
-    background-color: rgb(4, 52, 94);
-    color: white;
-    display: inline-block;
-    position: relative;
-    left: 18rem;
-    font-size: .8em;
-    bottom: -4px;
-    letter-spacing: 1px;
-    border-radius: 10px;
+  background-color: rgb(4, 52, 94);
+  color: white;
+  display: inline-block;
+  position: relative;
+  left: 18rem;
+  font-size: .8em;
+  bottom: -4px;
+  letter-spacing: 1px;
+  border-radius: 10px;
 }
 .goToConfiguration:hover{
-    background-color: rgb(16, 110, 192);
+  background-color: rgb(16, 110, 192);
 }
 .HeaderTitleDashboard{
-    margin-left: 11em;
+  margin-left: 11em;
 }
 
+/* TABLE */
 table {
   border-spacing: 0;
   table-layout: auto;  
@@ -264,7 +257,6 @@ table {
   margin-left: auto;
   margin-right: auto;
   width: 105%;
-    
 }
 th, td {
   border: 1px solid black;
@@ -274,7 +266,7 @@ caption {
   font-weight: bold;
   font-size: 24px;
   text-align: left;
-  color: rgb(253, 118, 68);
+  color: rgb(223, 72, 17);
   margin-bottom: 16px;
   caption-side: top; 
   text-align: center;
@@ -351,21 +343,21 @@ a:not([href]):not([tabindex]):hover{
 }
 
 .set_active{
-    display:table;
-    margin: 0 ;
-    margin-bottom: 50px;
+  display:table;
+  margin: 0 ;
+  margin-bottom: 50px;
 }
 .no_active{
-    display:none;
+  display:none;
 }
 
 .loadButton{
-    background-color: rgb(4, 52, 94);
-    color: white;
-    margin: 10px 0;
+  background-color: rgb(4, 52, 94);
+  color: white;
+  margin: 10px 0;
 }
 .loadButton:hover{
-    background-color: rgb(16, 110, 192);
+  background-color: rgb(16, 110, 192);
 }
 .resetBtn{
   margin-left: 20px;
@@ -399,4 +391,9 @@ a:not([href]):not([tabindex]):hover{
 }
 .first-error{
   text-align: center;
+  font-weight: bold;
+  font-size: 1em;
+}
+.text-field-class{
+  background-color: beige;
 }

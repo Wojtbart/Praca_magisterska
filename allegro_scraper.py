@@ -77,7 +77,7 @@ def get_data_and_insert(cnx,object_list, key_name):
 
 def find_offers(token,phrase,limit):
     try:
-        # REGULARR szukamy tylko w tytulach
+        # REGULAR szukamy tylko w tytulach
         url = "https://api.allegro.pl.allegrosandbox.pl/offers/listing?phrase="f"{phrase}&fallback=false&limit="f"{limit}""" #&searchMode=REGULAR
         headers = {'Authorization': 'Bearer ' + token, 'Accept': "application/vnd.allegro.public.v1+json"}
 

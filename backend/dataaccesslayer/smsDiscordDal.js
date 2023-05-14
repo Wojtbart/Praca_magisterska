@@ -31,7 +31,7 @@ async function sendSMStoPhone(textMessage) {
   });
 }
 
-const sendSms = async (req,res)=>{
+const sendSms = async (req)=>{
 
   let textMessage='\n';
   const {data}=req.body;
@@ -167,16 +167,15 @@ const sendToDiscord= async (req, res) => {
   return await channel.send({ embeds: arrayOfEmbeds })
   .then(message => console.log(`Wysłano wiadomośc do serwisu Discord!`))
   .catch(console.error);
-
 }
 
 const sendMessageToDiscord= (req,res)=>{
-    try{
-        sendToDiscord(req, res);
-    }
-    catch(err){
-        console.error(err);
-    } 
+  try{
+    sendToDiscord(req, res);
+  }
+  catch(err){
+    console.error(err);
+  } 
 }
 
 client.login(config.tokens.BOT_TOKEN);

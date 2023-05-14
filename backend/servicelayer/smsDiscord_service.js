@@ -1,15 +1,25 @@
 const smsDiscordDal=require('../dataaccesslayer/smsDiscordDal');
 
-const sendSms = async (req,res)=>{
+const sendSms = async (req)=>{
     
-  const sendSms = await smsDiscordDal.sendSms(req);
-  return (sendSms);
+  try {
+    const sendSms = await smsDiscordDal.sendSms(req);
+    return sendSms;
+  } 
+  catch (error) {
+    return null;
+  }
 }
 
 const sendMessageToDiscord = async (req,res)=>{
-    
-  const sendMessageToDiscord = await smsDiscordDal.sendMessageToDiscord(req,res);
-  return (sendMessageToDiscord);
+  try {
+    const sendMessageToDiscord = await smsDiscordDal.sendMessageToDiscord(req,res);
+    return sendMessageToDiscord;
+  } 
+  catch (error) {
+    return null;
+  }
+  
 }
 
 module.exports={sendSms, sendMessageToDiscord};

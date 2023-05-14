@@ -24,10 +24,13 @@ const sendNotificationJob = async (req,res)=>{
     let requestArray=[];
     let websites=[];
     let services=[];
+    let hour='';
+    let minute='';
 
     for (item in req.body){
       if(req.body.hasOwnProperty(item)) {
-        var value = req.body[item];
+        let value = req.body[item];
+
         if(value){
           if(item=='olx' || item=='amazon'|| item=='allegro'|| item=='pepper') websites.push(item);
           else if(item=='email' || item=='sms'|| item=='discord') services.push(item);
@@ -35,16 +38,12 @@ const sendNotificationJob = async (req,res)=>{
         }
       }
     }
-
+    
     let objData = {
       websites : websites,
       phrase: phrase,
       request_number: request_number
     };
-
-    let hour='';
-    let minute='';
-    const data=req.body;
 
     services.forEach(el=>{
       if (el==='email') sendEmail=true;
@@ -57,9 +56,9 @@ const sendNotificationJob = async (req,res)=>{
         elem[0].stop();
         console.log("Job został zatrzymany dla użytkownika "+user_id);
       }
-    })
+    });
 
-    if(godzina_maila !== null ) {
+    if( godzina_maila !== null ) {
 
       let cronTime=godzina_maila.split(":");
       hour=cronTime[0];
@@ -69,11 +68,12 @@ const sendNotificationJob = async (req,res)=>{
       var valid = cron.validate(cronStr);
 
       if(valid){
+
         const job = cron.schedule(cronStr, async () => {
 
           const getDataFromMethod= await axios.post(url, objData)
           .then((res) => {
-            return res.data;
+          return res.data;
           })
           .catch((err) => {
             console.error(err);
@@ -114,20 +114,18 @@ const sendNotificationJob = async (req,res)=>{
               console.error(err);
             });
           }
-
         },{
           scheduled: true,
           timezone: "Europe/Warsaw"
         });
-
         arrOfJobs.push([job,user_id]);
+        console.log("Poprawnie udało się zarejestrować job do wykonywania zadań");
       }
       else{
         throw new Error("Niepoprawnie ustawiony cron do wykonywania zadań!");
       }  
     }
-    else{
-
+    else if(repeat_after_specified_time!==0){
       const cronStr=`*/${repeat_after_specified_time} * * * *`;
       var valid = cron.validate(cronStr);
 
@@ -177,68 +175,30 @@ const sendNotificationJob = async (req,res)=>{
               console.error(err);
             });
           }
-
          },{
            scheduled: true,
            timezone: "Europe/Warsaw"
          });
-        // console.log("jestem tutaj 1");
-        // console.log(job);
-        // console.log("jestem tutaj 2");
-        // console.log("name",job.options);
-        // console.log("name",job.options.name);
-        // console.log("TASK  scheduled",job.ScheduledTask);
-
-        // for (let item in job){
-        //   console.log(item)
-        //   console.log("\n\n")
-        // }
-
-
         arrOfJobs.push([job,user_id]);
-        // console.log(arrOfJobs)
+        console.log("Poprawnie udało się zarejestrować job do wykonywania zadań");
 
       }
       else{
         throw new Error("Niepoprawnie ustawiony cron do wykonywania zadań!");
       }
     }
-    res.status(201).json({status: 'OK', message: 'Poprawnie zarejestrowano użytkownika!',data:data});
+    else{
+      console.log("Tylko usunięto Joby!")
+    }
+
+    res.status(201).json({status: 'OK', message: 'Poprawnie udało się zarejestrować joby do wykonywania zadań!'});
   }
   catch(err){
-      console.error(err)
-      res.status(500).send({
-          message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
-      });
+    console.error(err)
+    res.status(500).send({
+        message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
+    });
   } 
 }
-
-// TODO JAK USUWAC JOBY
-
-// const job = cron.schedule("*/1 * * * *", () => {
-//   // mailService();
-//   console.log(new Date().toLocaleString());
-// },{
-//   scheduled: true,
-//   timezone: "Europe/Warsaw"
-// });
-
-// var valid = cron.validate('59 * * * *');
-// console.log(typeof valid);
-// var invalid = cron.validate('60 * * * *');
-// console.log(valid);
-// console.log(invalid);
-
-// job.start();
-// job.stop();
-// const cronList = []
-// cronList.push(new CronJob('* * * * * *', () => {
-//         ...
-// }));
-// cronList.forEach((cron) => cron.stop()) 
-// https://www.reddit.com/r/node/comments/maeshx/cant_stop_cron_job_using_nodecron/
-// https://medium.com/@usamayousuf_62526/schedule-tasks-with-cron-job-in-node-js-1f03ad44a627
-
-
 
 module.exports={sendNotificationJob};

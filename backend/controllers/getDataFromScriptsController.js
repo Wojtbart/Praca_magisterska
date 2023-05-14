@@ -1,18 +1,15 @@
-// const usersService=require('../servicelayer/users');
-const Pepper_model=require('../models/Pepper_articles');
-const Olx_model=require('../models/OLX_articles');
-const Allegro_model=require('../models/Allegro_articles');
-const Amazon_model=require('../models/Amazon_articles');
-const { spawn } = require('child_process')
+const dataFromPlatformsService=require('../servicelayer/dataFromPlatforms_service');
+const { spawn } = require('child_process');
 
-const getPepperData = (req,res,website) => {
+let REGEX=/\d+/;
 
-    let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
+const getPepperData = (req,website) => {
 
-    let pepperArticles=[];
+    let {phrase, request_number} =  req.body;
+
     let arrOfData=[];
     let arrOfArguments=[];
-    var numberReturnedRecordsFromBackend=0;
+    let numberReturnedRecordsFromBackend=0;
     let numberLimit=0;
     
     arrOfArguments.push('../pepper.py');
@@ -26,7 +23,7 @@ const getPepperData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane pepper: ', data.toString());
-                numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
+                numberReturnedRecordsFromBackend = data.toString().match(REGEX)[0];
             });
             
             python.stderr.on('data', (data) => {
@@ -34,8 +31,8 @@ const getPepperData = (req,res,website) => {
             });
 
             python.on('close', (code) => {
-                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
+                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces\n`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd\n`);
             });
         
             python.on('exit', async function(code) {
@@ -43,14 +40,8 @@ const getPepperData = (req,res,website) => {
                 if (parseInt(request_number) > parseInt(numberReturnedRecordsFromBackend))  numberLimit=numberReturnedRecordsFromBackend;
                 else numberLimit=request_number;
 
-                pepperArticles= await Pepper_model.findAll({
-                    order: [["id","DESC"]], 
-                    limit: parseInt(numberLimit)
-                })
-
+                const pepperArticles= await dataFromPlatformsService.getPepperArticles(numberLimit);
                 resolveFunc(pepperArticles);
-                
-                console.log("Wysłano dane serwisu PEPPER!\n");
                 arrOfData.push(pepperArticles);
             })
         });
@@ -58,14 +49,13 @@ const getPepperData = (req,res,website) => {
     return arrOfData; 
 }
 
-const getOlxData = (req,res,website) => {
+const getOlxData = (req,website) => {
 
-    let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
+    let {phrase, request_number} =  req.body;
 
-    let olxArticles=[];
     let arrOfData=[];
     let arrOfArguments=[];
-    var numberReturnedRecordsFromBackend=0;
+    let numberReturnedRecordsFromBackend=0;
     let numberLimit=0;
     
     arrOfArguments.push('../olx_scrapper.py');
@@ -79,7 +69,7 @@ const getOlxData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane olx: ', data.toString());
-                numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
+                numberReturnedRecordsFromBackend = data.toString().match(REGEX)[0];
             });
             
             python.stderr.on('data', (data) => {
@@ -87,8 +77,8 @@ const getOlxData = (req,res,website) => {
             });
 
             python.on('close', (code) => {
-                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
+                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces\n`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd\n`);
             });
         
             python.on('exit', async function(code) {
@@ -96,14 +86,8 @@ const getOlxData = (req,res,website) => {
                 if (parseInt(request_number) > parseInt(numberReturnedRecordsFromBackend))  numberLimit=numberReturnedRecordsFromBackend;
                 else numberLimit=request_number;
 
-                olxArticles= await Olx_model.findAll({
-                    order: [["id","DESC"]], 
-                    limit: parseInt(numberLimit)
-                })
-
+                const olxArticles= await dataFromPlatformsService.getOlxArticles(numberLimit);
                 resolveFunc(olxArticles);
-                
-                console.log("Wysłano dane serwisu OLX!\n");
                 arrOfData.push(olxArticles);
             })
         });
@@ -111,14 +95,13 @@ const getOlxData = (req,res,website) => {
     return arrOfData; 
 }
 
-const getAllegroData = (req,res,website) => {
+const getAllegroData = (req, website) => {
 
-    let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
+    let {phrase, request_number} =  req.body;
 
-    let allegroArticles=[];
     let arrOfData=[];
     let arrOfArguments=[];
-    var numberReturnedRecordsFromBackend=0;
+    let numberReturnedRecordsFromBackend=0;
     let numberLimit=0;
     
     arrOfArguments.push('../allegro_scraper.py');
@@ -132,7 +115,7 @@ const getAllegroData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane allegro: ', data.toString());
-                numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
+                numberReturnedRecordsFromBackend = data.toString().match(REGEX)[0];
             });
             
             python.stderr.on('data', (data) => {
@@ -140,8 +123,8 @@ const getAllegroData = (req,res,website) => {
             });
 
             python.on('close', (code) => {
-                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
+                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces\n`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd\n`);
             });
         
             python.on('exit', async function(code) {
@@ -149,14 +132,8 @@ const getAllegroData = (req,res,website) => {
                 if (parseInt(request_number) > parseInt(numberReturnedRecordsFromBackend)) numberLimit=numberReturnedRecordsFromBackend;
                 else numberLimit=request_number;
 
-                allegroArticles= await Allegro_model.findAll({
-                    order: [["id","DESC"]], 
-                    limit: parseInt(numberLimit)
-                })
-
+                const allegroArticles= await dataFromPlatformsService.getAllegroArticles(numberLimit);
                 resolveFunc(allegroArticles);
-                
-                console.log("Wysłano dane serwisu Allegro!\n");
                 arrOfData.push(allegroArticles);
             })
         });
@@ -164,14 +141,13 @@ const getAllegroData = (req,res,website) => {
     return arrOfData; 
 }
 
-const getAmazonData = (req,res,website) => {
+const getAmazonData = (req, website) => {
 
-    let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
+    let {phrase, request_number} =  req.body;
 
-    let amazonArticles=[];
     let arrOfData=[];
     let arrOfArguments=[];
-    var numberReturnedRecordsFromBackend=0;
+    let numberReturnedRecordsFromBackend=0;
     let numberLimit=0;
     
     arrOfArguments.push('../amazon_scrapper.py');
@@ -185,7 +161,7 @@ const getAmazonData = (req,res,website) => {
 
             python.stdout.on('data', function (data) {
                 console.log('Dane amazon: ', data.toString());
-                numberReturnedRecordsFromBackend = data.toString().match(/\d+/)[0];
+                numberReturnedRecordsFromBackend = data.toString().match(REGEX)[0];
             });
             
             python.stderr.on('data', (data) => {
@@ -193,8 +169,8 @@ const getAmazonData = (req,res,website) => {
             });
 
             python.on('close', (code) => {
-                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces`);
-                else console.error(`Proces zakończony z kodem: ${code} - błąd`);
+                if(code==0) console.log(`Proces zakończony z kodem: ${code} - sukces\n`);
+                else console.error(`Proces zakończony z kodem: ${code} - błąd\n`);
             });
         
             python.on('exit', async function(code) {
@@ -202,14 +178,8 @@ const getAmazonData = (req,res,website) => {
                 if (parseInt(request_number) > parseInt(numberReturnedRecordsFromBackend)) numberLimit=numberReturnedRecordsFromBackend;
                 else numberLimit=request_number;
 
-                amazonArticles= await Amazon_model.findAll({
-                    order: [["id","DESC"]], 
-                    limit: parseInt(numberLimit)
-                })
-
+                const amazonArticles= await dataFromPlatformsService.getAmazonArticles(numberLimit);
                 resolveFunc(amazonArticles);
-                
-                console.log("Wysłano dane serwisu Amazon!\n");
                 arrOfData.push(amazonArticles);
             })
         });
@@ -217,36 +187,33 @@ const getAmazonData = (req,res,website) => {
     return arrOfData; 
 }
 
-
 const getDataFromWebsite= async (req,res)=>{
     try{
 
-        let {websites,notifications,actual_or_mail_hour, phrase, request_number} =  req.body;
+        let {websites} =  req.body;
         websites=websites.flat()
 
         let getDataPepper= [];
         let getDataOlx=[];
         let getDataAmazon=[];
         let getDataAllegro=[];
+        
         for (let i = 0; i < websites.length; i++) {
-            if (websites[i]==='pepper') getDataPepper = await (getPepperData(req,res,websites[i]));
-            else if (websites[i]==='olx') getDataOlx = await (getOlxData(req,res,websites[i]))
-            else if (websites[i]==='allegro') getDataAllegro = await (getAllegroData(req,res,websites[i]));
-            else getDataAmazon = await (getAmazonData(req,res,websites[i]));
+            if (websites[i]==='pepper') getDataPepper = await (getPepperData(req, websites[i]));
+            else if (websites[i]==='olx') getDataOlx = await (getOlxData(req, websites[i]))
+            else if (websites[i]==='allegro') getDataAllegro = await (getAllegroData(req, websites[i]));
+            else getDataAmazon = await (getAmazonData(req,websites[i]));
         }
 
-        await res.status(201).json({status: 'OK', message: 'Poprawnie pobrano dane!',pepper_data:getDataPepper, olx_data:getDataOlx, amazon_data:getDataAmazon, allegro_data: getDataAllegro })
-
+        await res.status(201).json({status: 'OK', message: 'Poprawnie pobrano dane!',pepper_data:getDataPepper, olx_data:getDataOlx, amazon_data:getDataAmazon, allegro_data: getDataAllegro });
         console.log("Serwer pobrał dane z bazy danych!");
-
     }
     catch(err){
-        console.error(err)
+        console.error(err);
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
         });
     } 
 }
-
 
 module.exports={getDataFromWebsite};

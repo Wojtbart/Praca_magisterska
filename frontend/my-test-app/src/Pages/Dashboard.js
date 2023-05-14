@@ -11,7 +11,7 @@ const Dashboard = () => {
   const NOTIFICATION_NAMES=["email", "sms", "discord"];
   const CHOICES=["aktualna_oferta", "godzina_maila", "repeat_after_specified_time"];
 
-  const [disabled, setDisabled] = useState(false);
+  const [disabledLoadButton, setDisabledLoadButton] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataSendByBackend, setDataSendByBackend] = useState(false);
 
@@ -29,8 +29,6 @@ const Dashboard = () => {
 
   let notificationsForShow=[];
   let sendHourOrRepeatTime='';
-
-  const pepperTable = useRef();
   
   useEffect(() => {
     const checkUser = () => {
@@ -94,6 +92,7 @@ const Dashboard = () => {
         NOTIFICATION_NAMES.forEach(el=>{
           if(el===key) notifications.push(key);
         });
+
 
         // eslint-disable-next-line no-loop-func
         CHOICES.forEach(el=>{
@@ -231,19 +230,24 @@ const Dashboard = () => {
     setIsActiveTablePepper(false);
     setDataSendByBackend(false);
 
-    if(requestsNumber &&phrase) setDisabled(false);
+    if(requestsNumber &&phrase) setDisabledLoadButton(false);
   }
   
   const handleSubmit = async (e) => {
 
     e.preventDefault();
-    setDisabled(true);
+    setDisabledLoadButton(true);
 
     let phrase_value=phrase;
     let request_number=requestsNumber;
     let user_config = await getUserConfig();
     user_config.phrase = phrase_value;
     user_config.request_number = request_number;
+    
+    if(user_config.request_number> 20 || user_config.request_number<0){
+      alert("Podano nieprawidłowe wartości we wprowadzanej liczbie zapytań!");
+      return;
+    }
 
     if(user_config.aktualna_oferta){
       await getData(user_config);
@@ -279,11 +283,12 @@ const Dashboard = () => {
                   }}
                   fullWidth
                   label="Szukaj"
+                  InputProps={{ className: "text-field-class" }}
                 />
               </div>
 
               <div className="input-dashboard">
-                <p >Ilośc zapytań </p>
+                <p >Ilośc zapytań (maks. 20) </p>
                 <TextField
                   className="input-dashboard"
                   id="outlined-number"
@@ -294,7 +299,8 @@ const Dashboard = () => {
                     setRequestsNumber(e.target.value);
                   }}
                   InputProps={{
-                    inputProps: { min: 0, max: 20 }
+                    inputProps: { min: 0, max: 20 },
+                    className: "text-field-class"
                   }}
                   InputLabelProps={{
                     shrink: true
@@ -303,7 +309,7 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <button className="btn loadButton" disabled={!requestsNumber || !phrase || disabled } onClick={handleSubmit}>ZAŁADUJ</button>
+                <button className="btn loadButton" disabled={!requestsNumber || !phrase || disabledLoadButton } onClick={handleSubmit}>ZAŁADUJ</button>
                 <button className="btn resetBtn" onClick={handleReset} >RESET</button>
               </div>
             </div> 
@@ -313,7 +319,7 @@ const Dashboard = () => {
               {!loading?
                 <div className="table_div">   
 
-                  <table ref={pepperTable} className={isActiveTablePepper ? 'set_active' : 'no_active'}>
+                  <table  className={isActiveTablePepper ? 'set_active' : 'no_active'}>
                     <caption>PEPPER</caption>
                     <thead>
                       <tr>
@@ -335,7 +341,7 @@ const Dashboard = () => {
                       {
                         dataFromServicePepper.map((item, index) => (
                           <tr key={index}>
-                            <th>{item.Tytul}</th>
+                            <th >{item.Tytul===''|| !item.Tytul  ? 'BRAK' : item.Tytul}</th>
                             <td >{item.Cena_oryginalna===''|| !item.Cena_oryginalna  ? 'BRAK' : item.Cena_oryginalna}</td>
                             <td >{item.Cena_promocyjna===''|| !item.Cena_promocyjna  ? 'BRAK' : item.Cena_promocyjna}</td>
                             <td >{item.Czy_promocja_trwa===''|| !item.Czy_promocja_trwa  ? 'TAK' : item.Czy_promocja_trwa}</td>
@@ -344,7 +350,7 @@ const Dashboard = () => {
                             <td >{item.Link===''|| !item.Link  ? 'BRAK' : <a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Link}>Link</a>}</td>
                             <td >{item.Obnizka_w_procentach===''|| !item.Obnizka_w_procentach  ? 'BRAK' : item.Obnizka_w_procentach}</td>
                             <td >{item.Opublikowano}</td>
-                            <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Zdjecie} >Zdjęcie</a></td>
+                            <td >{item.Zdjecie===''|| !item.Zdjecie  ? 'BRAK' : <a  target="_blank" rel="noopener noreferrer" href={item.Zdjecie}><img src={item.Zdjecie} alt="Kliknij, aby wyświetlić" width={70} height={150}></img></a>}</td>
                             <td >{item.ilosc_komentarzy===''|| !item.ilosc_komentarzy  ? 'BRAK' : item.ilosc_komentarzy}</td>
                             <td >{item.uzytkownik_wystawiajacy}</td> 
                           </tr>
@@ -372,11 +378,11 @@ const Dashboard = () => {
                       {
                         dataFromServiceAmazon.map((item, index) => (
                           <tr key={index}>
-                            <th>{item.Tytul}</th>
+                            <th >{item.Tytul===''|| !item.Tytul  ? 'BRAK' : item.Tytul}</th>
                             <td >{item.Cena_oryginalna===''|| !item.Cena_oryginalna  ? 'BRAK' : item.Cena_oryginalna}</td>
                             <td >{item.Cena_promocyjna===''|| !item.Cena_promocyjna  ? 'BRAK' : item.Cena_promocyjna+' zł'}</td>
                             <td >{item.Link===''|| !item.Link  ? 'BRAK' : <a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Link}>Link</a>}</td>
-                            <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Zdjecie} >Zdjęcie</a></td>
+                            <td >{item.Zdjecie===''|| !item.Zdjecie  ? 'BRAK' : <a  target="_blank" rel="noopener noreferrer" href={item.Zdjecie}><img src={item.Zdjecie} alt="Kliknij, aby wyświetlić" width={70} height={150}></img></a>}</td>
                             <td >{item.Dostawa===''|| !item.Dostawa  ? 'BRAK informacji' : item.Dostawa}</td>
                             <td >{item.Czy_darmowa_dostawa===''|| !item.Czy_darmowa_dostawa  ? 'TAK' : item.Czy_darmowa_dostawa}</td>
                             <td >{item.Ocena_w_gwiazdkach===''|| !item.Ocena_w_gwiazdkach  ? 'BRAK' : item.Ocena_w_gwiazdkach}</td>
@@ -403,11 +409,11 @@ const Dashboard = () => {
                       {
                         dataFromServiceOlx.map((item, index) => (
                           <tr key={index}>
-                            <th>{item.Tytul}</th>
+                            <th >{item.Tytul===''|| !item.Tytul  ? 'BRAK' : item.Tytul}</th>
                             <td >{item.Cena===''|| !item.Cena  ? 'BRAK' : item.Cena}</td>
                             <td >{item.Lokalizacja===''|| !item.Lokalizacja  ? 'BRAK' : item.Lokalizacja}</td>
                             <td >{item.Link===''|| !item.Link  ? 'BRAK' : <a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Link}>Link</a>}</td>
-                            <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.Zdjecie} >Zdjęcie</a></td>
+                            <td >{item.Zdjecie===''|| !item.Zdjecie  ? 'BRAK' : <a  target="_blank" rel="noopener noreferrer" href={item.Zdjecie}><img src={item.Zdjecie} alt="Kliknij, aby wyświetlić" width={70} height={150}></img></a>}</td>
                             <td >{item.Stan===''|| !item.Stan  ? 'BRAK' : item.Stan}</td>
                           </tr>
                         )) 
@@ -434,8 +440,8 @@ const Dashboard = () => {
                       {
                         dataFromServiceAllegro.map((item, index) => (
                           <tr key={index}>
-                            <th>{item.product_name}</th>
-                            <td ><a className="table-link" target="_blank" rel="noopener noreferrer" href={item.image_link} >Zdjęcie</a></td>
+                            <th >{item.product_name===''|| !item.product_name  ? 'BRAK' : item.product_name }</th>
+                            <td >{item.image_link===''|| !item.image_link  ? 'BRAK' : <a  target="_blank" rel="noopener noreferrer" href={item.image_link}><img src={item.image_link} alt="Kliknij, aby wyświetlić" width={70} height={150}></img></a>}</td>
                             <td >{item.has_promotion===''|| !item.has_promotion  ? 'BRAK PROMOCJI' : "PROMOCJA"}</td>
                             <td >{item.quantity===''|| !item.quantity  ? 'BRAK' : item.quantity}</td>
                             <td >{item.price_in_PLN===''|| !item.price_in_PLN  ? 'BRAK' : item.price_in_PLN +" zł"}</td>
@@ -461,6 +467,9 @@ const Dashboard = () => {
             </div>
           }
         </div>
+        {/* <footer className='text-center p-3 text-white' style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
+          © 2023 Wszystkie prawa zastrzeżone!
+        </footer> */}
       </div>
     </>
   ); 

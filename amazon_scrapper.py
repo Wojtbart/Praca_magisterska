@@ -202,6 +202,3 @@ if __name__ == "__main__":
         if (cnx is not None and cnx.is_connected()):
             cnx.close()
             print("Polaczenie z MySQL zostalo zaonczone!")
-
-
-# https://www.scrapingbee.com/blog/web-scraping-amazon/ przejrzec

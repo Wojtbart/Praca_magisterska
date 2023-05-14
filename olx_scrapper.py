@@ -64,7 +64,11 @@ def get_data_and_insert(cnx,phrase):
                 arr.append(str(elem.string))
 
             for elem in link:
-                link_to_page='https://www.olx.pl'+elem['href']
+                link_to_page=''
+                if elem['href'].startswith("/d"):
+                    link_to_page='https://www.olx.pl'+elem['href']
+                else:
+                    link_to_page=elem['href']
                 arr.append(link_to_page)
 
             if( not img):

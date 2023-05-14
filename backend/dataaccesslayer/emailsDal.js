@@ -6,7 +6,8 @@ const config = ini.parse(fs.readFileSync('../config.ini','utf-8'));
 const nodemailer = require('nodemailer');
 const handlebars = require("handlebars");
 
-const sendMail = async (req,res)=>{
+const sendMail = async (req)=>{
+
     let receiver=null;  
     let {user,data}=req.body;
 
@@ -36,11 +37,21 @@ const sendMail = async (req,res)=>{
                 id: parseInt(user) 
             }
         }); 
+
+        // Rejestracja bloku pomocniczego `or`
+        handlebars.registerHelper('or', function(a, b) {
+            return a || b;
+        });
         
-        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../templates/template.hbs"), "utf8")
+        // Rejestracja bloku pomocniczego `eq`
+        handlebars.registerHelper('eq', function(a, b) {
+            return a === b;
+        });
+        
+        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../templates/template.hbs"), "utf8");
 
         const tableTemplate = handlebars.compile(emailTemplateSource);
-
+        
         const htmlToSend = tableTemplate({ arrayOlx: data.olx_data, arrayPepper: data.pepper_data, arrayAmazon: data.amazon_data, arrayAllegro: data.allegro_data });
 
         let mailOptions =  {
@@ -50,7 +61,7 @@ const sendMail = async (req,res)=>{
             html: htmlToSend
         };
 
-        mailTransporter.sendMail(mailOptions, function (err, data) {
+        return mailTransporter.sendMail(mailOptions, function (err, data) {
             if (err) {
                 console.error("Wystąpił błąd:", err.message);
             } else {

@@ -1,50 +1,10 @@
 const usersService=require('../servicelayer/users');
-const Users=require('../models/Users_model');
-const { Op } = require("sequelize");
-
-const registerUser= async(req,res)=>{
-    try{
-
-        const {name,surname,email,password,phone,login} =  req.body;
-
-        const user= await Users.Users_models.findAll({
-            where:{
-                [Op.or]: [  { login: login }, {email:email},{phone:phone} ]
-            }
-        });
-
-        if(!user || user.length >=1 ){
-
-            let errorMess='';
-            if(email==user[0].email) errorMess='Użytkownik o takim emailu już istnieje';
-            if(login==user[0].login) errorMess='Użytkownik o takim loginie już istnieje';
-            if(phone==user[0].phone) errorMess='Użytkownik o takim numerze telefonu już istnieje';
-
-            res.status(401).json({
-                message: "Rejestracja nie powiodła się",
-                error: errorMess,
-            })
-        }
-        else{
-            const registeredUser= await usersService.registerUser(req,res);
-            res.status(201).json({status: 'OK', message: 'Poprawnie zarejestrowano użytkownika!'});
-        }
-
-    }
-    catch(err){
-        console.error(err)
-        res.status(500).send({
-            message: err.message || "Wystąpił bład w trakcie rejestrowania użytkownika!"
-        });
-    } 
-}
 
 const getUser= async(req,res)=>{
     try{
         const getUser= await usersService.getUser(req.params.login);
 
         if (getUser === null) {
-            console.log('Nie znaleziono!');
             res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
         } else {
             res.status(201).json({status: 'OK', message: `Znaleziono użytkownika o loginie: ${getUser.login}`,user_id:getUser.id});
@@ -58,151 +18,138 @@ const getUser= async(req,res)=>{
 }
 
 const getConfiguration= async(req,res)=>{
-    let userek=null
-    try{
-        const getCOnfigurationUser= await usersService.getUser(req.params.login);
-        try{
-    
-            userek= await Users.Users_configuration_model.findOne({
-                where: {
-                    user_id: getCOnfigurationUser.id
-                }
-            }); 
-        }
-        catch(err){
-            console.error(err);
-        } 
 
-        if (getCOnfigurationUser === null) {
-            console.log('Nie znaleziono konfiguracji użytkownika!');
+    try{
+        const getUser= await usersService.getUser(req.params.login);
+        if (getUser === null) {
+            console.log('Nie znaleziono użytkownika!');
             res.status(404).json({status: 'Error', message: 'Nie znaleziono użytkownika o podanym loginie!'});
-        } else {
-            res.status(201).json({status: 'OK', message: `Udalo sie`,data:userek});
+            return;
+        }
+
+        const getUserConfiguration= await usersService.getUserConfiguration(getUser.id);
+        if(getUserConfiguration === null){
+            console.log('Nie znaleziono konfiguracji użytkownika!');
+            res.status(404).json({status: 'Error', message: 'Nie znaleziono konfiguracji dla tego użytkownika!'});
+        }
+        else {
+            res.status(201).json({status: 'OK', message: `Udalo sie`,data:getUserConfiguration});
         } 
     }
     catch(err){
-        console.error(err)
+        console.error(err);
         res.status(500).send({
             message: err.message || "Wystąpił bład w trakcie wykonywania zapytania!"
         });
     } 
 }
 
-
 const login = async (req,res)=>{
 
-        const { login, password } = req.body;
+    const { login, password } = req.body;
 
-        try {
-            const user = await Users.Users_models.findOne({ where: { login: login, password:password } });
+    try {
+        const user = await usersService.authorizeUserLogin(login,password);
 
-            if (user==null ) {
-                errorMess='Niepoprawne dane użytkownika';
+        if (user==null ) {
+            errorMess='Niepoprawne dane użytkownika';
 
-                return res.status(401).json({
-                    message: "Nie udało się zalogować",
-                    error: errorMess,
-                })
-            }
-            else{
-                res.status(200).json({
-                    message: "Poprawnie udało się zalogować",
-                    login:user.login,
-                    email:user.email,
-                    phone:user.phone,
-                })
-            }  
-        } catch (error) {
-          res.status(500).json({
+            return res.status(401).json({
+                message: "Nie udało się zalogować",
+                error: errorMess,
+            })
+        }
+        else{
+            res.status(200).json({
+                message: "Poprawnie udało się zalogować",
+                login:user.login,
+                email:user.email,
+                phone:user.phone,
+            })
+        }  
+    } 
+    catch (error) {
+        res.status(500).json({
             message: "Wystąpił nieznany błąd",
             error: error.message,
-          })
+        })
+    }
+}
+
+const registerUser= async(req,res)=>{
+
+    const {email,phone,login} =  req.body;
+    let errorMess='';
+
+    try{
+        const users = await usersService.getUsersWithSameValues(login,email,phone);
+
+        if(!users || users.length >=1 ){
+
+            if(email==users[0].email) errorMess='Użytkownik o takim emailu już istnieje';
+            if(login==users[0].login) errorMess='Użytkownik o takim loginie już istnieje';
+            if(phone==users[0].phone) errorMess='Użytkownik o takim numerze telefonu już istnieje';
+
+            res.status(401).json({
+                message: "Rejestracja nie powiodła się",
+                error: errorMess,
+            });
         }
+        else{
+            try{
+                const registeredUser= await usersService.registerUser(req,res);
+                res.status(201).json({status: 'OK', message: 'Poprawnie zarejestrowano użytkownika!'});   
+            }
+            catch(err){
+                console.error(err);
+            } 
+        }
+    }
+    catch(err){
+        res.status(500).send({
+            message: err.message || "Wystąpił bład w trakcie rejestrowania użytkownika!"
+        });
+    } 
 }
 
 const saveConfiguration = async (req,res)=>{
-    const { olx, amazon, allegro,pepper, sms,discord,email,aktualna_oferta,godzina_maila, repeat_after_specified_time, user_id } = req.body;
+    const { user_id } = req.body;
+    let dataToSend=null;
 
     try {
-        // const user = await Users.findOne({ where: { login: login, password:password } });
-        // Users.Users_configuration_model
+        const configUser= await usersService.getUserConfiguration(user_id);
 
-        let usersList={};
-    
-            // const userLogin = await Users.findOne({ where: { login: login } });
-            // if(userLogin !=null){
-            //     res.status(401).json({
-            //         message: "Rejestracja nie powiodła się",
-            //         error: "Użytkownik o takim loginie już istnieje",
-            //     })
-            // }
-    
-            // const userEmail = await Users.findOne({ where: { email:email } });
-            // if(userEmail !=null){
-            //     res.status(401).json({
-            //         message: "Rejestracja nie powiodła się",
-            //         error: "Użytkownik o takim mailu już istnieje",
-            //     })
-            // }
-    
-            // const userPhone = await Users.findOne({ where: { phone:phone } });
-            // if(userPhone !=null){
-            //     res.status(401).json({
-            //         message: "Rejestracja nie powiodła się",
-            //         error: "Użytkownik o takim numerze telefonu już istnieje",
-            //     })
-            // }
-            let updated;
-            let configUser = await Users.Users_configuration_model.findAll({
-                where:{
-                    user_id: user_id
-                }
-            })
-
-            if( Object.keys(configUser).length!==0 ){
-
-                updated=  Users.Users_configuration_model.update({ 
-                    olx:olx,
-                    amazon:amazon,
-                    allegro:allegro,
-                    pepper: pepper,
-                    sms:sms,
-                    email:email,
-                    discord:discord,
-                    aktualna_oferta:aktualna_oferta,
-                    repeat_after_specified_time: repeat_after_specified_time,
-                    godzina_maila:godzina_maila
-                    },
-                    { where: { user_id: user_id } }
-                );
+        if( configUser!==null){
+            const updateUserConfig= await usersService.updateUserConfiguration(req);
+            if (updateUserConfig === null) {
+                console.log('Błąd podczas aktualizowania konfiguracji użytkownika!');
+                res.status(404).json({status: 'Error', message: 'Błąd podczas aktualizowania konfiguracji użytkownika!'});
+                return;
             }
-            else{
-                updated = await Users.Users_configuration_model.create({
-                olx:olx,
-                amazon:amazon,
-                allegro:allegro,
-                pepper: pepper,
-                sms:sms,
-                email:email,
-                discord:discord,
-                aktualna_oferta:aktualna_oferta,
-                godzina_maila:godzina_maila,
-                repeat_after_specified_time: repeat_after_specified_time,
-                user_id:user_id
-            });
+            dataToSend=updateUserConfig;
+        }
+        else{
+            const saveUserConfig= await usersService.saveUserConfiguration(req);
+            if (saveUserConfig === null) {
+                console.log('Błąd podczas tworzenia konfiguracji użytkownika!');
+                res.status(404).json({status: 'Error', message: 'Błąd podczas tworzenia konfiguracji użytkownika!'});
+                return;
             }
+            dataToSend=saveUserConfig;
+        }
 
+        return  res.status(200).json({
+            message: "Udało się poprawnie zapisać dane!!"
+        })
         
-           return  res.status(200).json({
-                message: "Udało się poprawnie zapisać dane!!",data:updated,
-            })
-    
-        
-    } catch (error) {
-      res.status(500).json({
-        message: "Wystąpił nieznany błąd",
-        error: error.message,
-      })
+    } 
+    catch (error) {
+
+        console.log(error);
+        res.status(500).json({
+            message: "Wystąpił nieznany błąd",
+            error: error.message,
+        })
     }
 }
 

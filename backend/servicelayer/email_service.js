@@ -1,13 +1,13 @@
 const emailDal=require('../dataaccesslayer/emailsDal');
 
-const sendMailService = async (req,res)=>{
-    
-  const sendMail = await emailDal.sendMail(req);
-  return (sendMail);
+const sendMailService = async (req)=>{
+  try {
+    const sendMail = await emailDal.sendMail(req);
+    return sendMail;
+  } 
+  catch (error) {
+    return null;
+  }
 }
 
-const addEmailTemplate= (req,res)=>{
-
-}
-
-module.exports={sendMailService, addEmailTemplate};
+module.exports={sendMailService};

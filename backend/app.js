@@ -35,8 +35,3 @@ app.use(function(err, req, res, next) {
 app.listen(PORT, ()=> console.log(`Listening on ${PORT} ...`));
 
 module.exports = app;
-
-// ENDPOINTS
-// app.get('/', (req, res) => {
-//   res.render('index',{title:'Projekt z mikroserwisami'});
-// });

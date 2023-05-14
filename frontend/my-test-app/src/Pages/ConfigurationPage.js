@@ -5,29 +5,28 @@ import { RiLoginBoxFill, RiMailCheckFill, RiPhoneFill } from "react-icons/ri";
 const ConfigurationPage = () => {
 
     const navigate = useNavigate();
-
     const checkList = ["OLX", "Amazon", "Pepper", "Allegro"];
     const notificationSystems= ["SMS", "Email", "Discord"];
+    const REGEX=/,\s*$/;
+
+    const [configuration, setConfiguration] = useState([]);
 
     const [checked, setChecked] = useState([]);
     const [checkedNotification, setCheckedNotification] = useState([]);
-
-    const [checked2, setChecked2] = useState(false);
+    const [checkedSendHour, setCheckedSendHour] = useState(false);
     const [checkedActualOffer, setCheckedActualOffer] = useState(false);
+    const [checkedSendAfterTime, setCheckedSendAfterTime] = useState(false);
+    const [disabledNotification, setDisabledNotification] = useState(false);
 
-    const [checked3, setChecked3] = useState(false);
-    const [text, setText] = useState("");
-    const [text3, setText3] = useState("");
+    const [textSendHour, setTextSendHour] = useState("");
+    const [textSendAfterTime, setTextSendAfterTime] = useState("");
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    
     const actualOfferCheckbox = useRef();
     const timeCheckbox = useRef();
     const minutesCheckbox = useRef();
-
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-
     
-    const [configuration, setConfiguration] = useState([]);
-
     const handleCheck = (event) => {
         var updatedList = [...checked];
         if (event.target.checked) {
@@ -95,12 +94,13 @@ const ConfigurationPage = () => {
             console.error('Wystąpił błąd!', error);
         });
     }
-     useEffect(() => {
-         getUserConfiguration();
-      }, []);
+    
+    useEffect(() => {
+        getUserConfiguration();
+    }, []);
 
     async function getUserConfiguration() {
-        var configrationList = [];
+        let configrationList = [];
         
         return fetch(`http://localhost:9005/getConfiguration/${localStorage.getItem("login")}`, {
             method: 'GET'
@@ -114,28 +114,28 @@ const ConfigurationPage = () => {
             }
 
             for (let item in dataFromBackend.data){
-                // console.error("wsztystko",item);
-                if (dataFromBackend.data[item] && dataFromBackend.data[item]!==0 && item!=="id" && item!=="user_id" ){
-                    // console.log("key:",item);
-                    // console.log("value:",dataFromBackend.data[item]);
-                    if(item==='repeat_after_specified_time'){
-                        configrationList.push("powtórz wysyłanie co "+dataFromBackend.data[item]+" min");
-                    }
-                    else if(item==='godzina_maila'){
-                        configrationList.push("wiadomości wysyłane o "+dataFromBackend.data[item]);
-                    }
-                    else configrationList.push(item+", ");
+                if (dataFromBackend.data[item] && dataFromBackend.data[item]!==0  ){
+                    if(item!=="id" && item!=="user_id"){
+                        if(item==='repeat_after_specified_time'){
+                            configrationList.push("powtórz wysyłanie co "+dataFromBackend.data[item]+" min");
+                        }
+                        else if(item==='godzina_maila'){
+                            configrationList.push("wiadomości wysyłane o "+dataFromBackend.data[item]);
+                        }
+                        else{
+                            configrationList.push(item+", ");
+                        } 
+                    } 
                 }
             }
-            configrationList[configrationList.length-1]=configrationList[configrationList.length-1].replace(/,\s*$/, "");
-            setConfiguration(configrationList);
-            // console.log(dataFromBackend.data)
-            // if("data" in dataFromBackend) return dataFromBackend.data;
-            // else return null;
-            
 
+            if(configrationList.length!==0){
+                configrationList[configrationList.length-1]=configrationList[configrationList.length-1].replace(REGEX, "");
+                setConfiguration(configrationList);
+            }
         })
         .catch(error => {
+            console.error('Wystąpił błąd!', error);
             this.setState({ errorMessage: error.toString() });
             console.error('Wystąpił błąd!', error);
         });
@@ -151,10 +151,8 @@ const ConfigurationPage = () => {
             body: JSON.stringify(obj),
         })
         .then((res) => res.json())
-		.then((data) => {
-            // alert("Poprawnie zapisano dane w bazie!");
+		.then( (data) => {
             setSuccess("Poprawnie zapisano dane w bazie!");
-            // dodać logowanie
         })
         .catch((err) => console.error(err));
     }
@@ -162,10 +160,29 @@ const ConfigurationPage = () => {
     const handleSubmit = async (e) => {
 
         const arr=checked.concat(checkedNotification);
-        if(checked.length===0 || checkedNotification.length===0  ) {
-            // alert("Wybierz dostepne opcje!")
-            setError("Wybierz dostepne opcje!");
+        if( checked.length===0 || (!checkedActualOffer && !checkedSendHour && !checkedSendAfterTime)) {
+            setError("Nie wybrano dostępnych opcji!");
             return;
+        }
+
+        if((checkedSendHour || checkedSendAfterTime) ){
+
+            if(checkedNotification.length===0){
+                setError("Nie wybrano systemów powiadomień!");
+                return;
+            }
+            if( checkedSendHour && textSendHour===''){
+                setError("Wybierz godzinę wysłania!");
+                return;
+            }
+            if( checkedSendAfterTime && textSendAfterTime===''){      
+                setError("Wybierz czas powtarzania wysyłania!");
+                return;
+            }
+            if(parseInt(textSendAfterTime)>59){
+                setError("Masymalny czas: 59 minut!");
+                return;
+            } 
         }
 
         e.preventDefault()
@@ -191,11 +208,17 @@ const ConfigurationPage = () => {
             }
         }
 
-        if(checked2) obj['godzina_maila']=text;
-        if(checked3) obj['repeat_after_specified_time']=parseInt(text3);
+        if(checkedSendHour) obj['godzina_maila']=textSendHour;
+        if(checkedSendAfterTime) obj['repeat_after_specified_time']=parseInt(textSendAfterTime);
         if(checkedActualOffer) obj['aktualna_oferta']=true;
+        if(disabledNotification) {
+            obj['sms']=false;
+            obj['discord']=false;
+            obj['email']=false;
+        }
 
         obj['user_id']=await getUser();
+        console.log("siema")
         await getUserConfiguration();
 
         saveConfigurationToDatabase(obj);
@@ -207,7 +230,7 @@ const ConfigurationPage = () => {
             <div>
                 <nav className="bg-dark navbar-dark navbar">
                     <div className="col-12 d-flex justify-content-center  text-white">
-                        <h3 className='HeaderTitle' >NOTIFICATIONER</h3>
+                        <h3 className='HeaderTitle' >POWIADAMIACZ</h3>
                         <button className='signOutBtn' onClick={handleSignOut}>WYLOGUJ SIE</button>
                     </div>
                 </nav>
@@ -257,7 +280,8 @@ const ConfigurationPage = () => {
                                     timeCheckbox.current.disabled=false;
                                     minutesCheckbox.current.disabled=false;
                                 }
-                                setCheckedActualOffer(!checkedActualOffer)
+                                setDisabledNotification(!disabledNotification);
+                                setCheckedActualOffer(!checkedActualOffer);
                             }}
                             />
                             Aktualne oferty
@@ -267,11 +291,11 @@ const ConfigurationPage = () => {
                             <input
                             name="checkbox"
                             type="checkbox"
-                            checked={checked2}
+                            checked={checkedSendHour}
                             ref={timeCheckbox}
                             onChange={() => {
-                                if(checked2){
-                                    setText(getActualTime())
+                                if(checkedSendHour){
+                                    setTextSendHour(getActualTime())
                                 }
 
                                 if(timeCheckbox.current.checked){
@@ -282,7 +306,7 @@ const ConfigurationPage = () => {
                                     actualOfferCheckbox.current.disabled=false;
                                     minutesCheckbox.current.disabled=false;
                                 }
-                                setChecked2(!checked2)
+                                setCheckedSendHour(!checkedSendHour)
                             }}
                             />
                             Ustaw godzinę wysłania
@@ -294,9 +318,10 @@ const ConfigurationPage = () => {
                             name="input"
                             id="timeCheckbox"
                             type="time"
-                            disabled={!checked2}
-                            value={text}
-                            onChange={e => setText(e.target.value)}
+                            disabled={!checkedSendHour}
+                            value={textSendHour}
+                            required
+                            onChange={e => setTextSendHour(e.target.value)}
                             />
                         </label>
 
@@ -304,7 +329,7 @@ const ConfigurationPage = () => {
                             <input
                             name="checkbox"
                             type="checkbox"
-                            checked={checked3}
+                            checked={checkedSendAfterTime}
                             ref={minutesCheckbox}
                             onChange={() => {
 
@@ -316,7 +341,7 @@ const ConfigurationPage = () => {
                                     actualOfferCheckbox.current.disabled=false;
                                     timeCheckbox.current.disabled=false;
                                 }
-                                setChecked3(!checked3)
+                                setCheckedSendAfterTime(!checkedSendAfterTime)
                             }}
                             />
                             Co ile minut chcesz wysyłać wiadomości
@@ -330,10 +355,10 @@ const ConfigurationPage = () => {
                             type="number"
                             min={1}
                             max={59}
-                            disabled={!checked3}
-                            value={text3}
+                            disabled={!checkedSendAfterTime}
+                            value={textSendAfterTime}
                             required
-                            onChange={e => setText3(e.target.value)}
+                            onChange={e => setTextSendAfterTime(e.target.value)}
                             />
                         </label>
 
@@ -345,7 +370,7 @@ const ConfigurationPage = () => {
                             <div className="list-container">
                                 {notificationSystems.map((item, index) => (
                                     <div key={index}>
-                                        <input value={item} type="checkbox" onChange={handleCheckNotification} />
+                                        <input value={item} type="checkbox" onChange={handleCheckNotification} disabled = {disabledNotification} />
                                         <span className={isCheckedNotifications(item)}>{item}</span>
                                     </div>
                                 ))}
