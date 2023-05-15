@@ -84,4 +84,15 @@ Users_models.hasOne(Users_configuration_model,{foreignKey: {
     name: 'user_id'
 }});
 
+// sequelize.query(' DROP TRIGGER IF EXISTS artykuly.after_user_create_save_user_empty_config;')
+
+// sequelize.query(
+// ' CREATE TRIGGER after_user_create_save_user_empty_config AFTER INSERT ON users' +
+// ' FOR EACH ROW' +
+// ' BEGIN' +
+// ' DECLARE userId int;' +
+// ' Select(SELECT id from users order by id desc limit 1) into userId;' +
+// ' INSERT INTO user_configuration(olx, amazon, allegro, pepper, sms, discord, email, aktualna_oferta, godzina_maila, repeat_after_specified_time, user_id) VALUES( false, false,false,false,false, false, false, false, null, 0, userId);' +
+// 'END;')
+
 module.exports={Users_models,Users_configuration_model};

@@ -9,7 +9,7 @@ COUNTER=0
 
 def insert_record(cnx, arr):
     global COUNTER
-    query = "INSERT INTO artykuly.artykuly3(Tytul, Link, Zdjecie, Ocena, Ocena_w_gwiazdkach, Dostawa, Czy_darmowa_dostawa, Cena_oryginalna,\
+    query = "INSERT INTO artykuly.artykuly_amazon(Tytul, Link, Zdjecie, Ocena, Ocena_w_gwiazdkach, Dostawa, Czy_darmowa_dostawa, Cena_oryginalna,\
           Cena_promocyjna, cena_bez_zl, ilosc_komentarzy, Ilosc_dostepnych) " \
             "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     # dodaje 1 nulle do koncowej kolumnytabeli

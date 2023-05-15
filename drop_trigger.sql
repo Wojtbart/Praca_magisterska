@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS artykuly.after_user_create_save_user_empty_config;

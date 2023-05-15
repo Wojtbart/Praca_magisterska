@@ -4,11 +4,11 @@ const sequelize =require('./database').sequelize
 const Allegro_articles_models = sequelize.define("artykuly_allegro", { 
     product_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     image_link: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     has_promotion: {
         type: DataTypes.BOOLEAN,
@@ -16,23 +16,23 @@ const Allegro_articles_models = sequelize.define("artykuly_allegro", {
     },
     quantity: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     price_in_PLN: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     popularity: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     delivery_in_PLN: {
         type: DataTypes.DECIMAL(10,2),
-        allowNull: false
+        allowNull: true
     },
     seller_name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 },{
     tableName: 'artykuly_allegro',
