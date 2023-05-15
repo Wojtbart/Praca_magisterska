@@ -51,13 +51,6 @@ const sendNotificationJob = async (req,res)=>{
       if (el==='discord') sendDiscordMessage=true;
     })
 
-    arrOfJobs.forEach(elem=>{
-      if(elem[1]===user_id){
-        elem[0].stop();
-        console.log("Job został zatrzymany dla użytkownika "+user_id);
-      }
-    });
-
     if( godzina_maila !== null ) {
 
       let cronTime=godzina_maila.split(":");
@@ -201,4 +194,27 @@ const sendNotificationJob = async (req,res)=>{
   } 
 }
 
-module.exports={sendNotificationJob};
+const deleteJobsForUser = async (req,res)=>{
+
+  try{
+    const {user_id} =  req.body;
+    let counter=0;
+
+    arrOfJobs.forEach(elem=>{
+      if(elem[1]===user_id){
+        elem[0].stop();
+        console.log("Job został zatrzymany dla użytkownika " + user_id);
+        counter++;
+      }
+    });
+
+    res.status(201).json({status: 'OK', message: `Ilość usuniętych zadań dla użytkownika ${user_id} to: ${counter}`})
+  }
+  catch(err){
+    res.status(500).send({
+        message: err.message || "Wystąpił bład w trakcie usuwania jobów użytkownika!"
+    });
+  } 
+}
+
+module.exports={sendNotificationJob, deleteJobsForUser};

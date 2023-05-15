@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from "react";
+import React, { useEffect, useState} from "react";
 import { useNavigate} from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import * as ReactBootStrap from "react-bootstrap";
@@ -212,6 +212,37 @@ const Dashboard = () => {
       console.log(e);
     } 
   }
+
+  async function deleteJobsForUser(user_config) {
+
+    let user_id=user_config.user_id;
+
+    try {
+      return fetch(`http://localhost:9005/deleteJobsForUser`, {
+        method: 'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ user_id: user_id })
+      })
+      .then( async response => {
+        
+        const dataObj= await response.json();
+        if (!response.ok) {
+            const error = (dataObj && dataObj.message) || response.statusText;
+            return Promise.reject(error);
+        }
+        console.log(dataObj.message);
+      })
+      .catch(error => {
+        this.setState({ errorMessage: error.toString() });
+        console.error('Wystąpił błąd!', error);
+      });
+    } 
+    catch (e) {
+      console.log(e);
+    } 
+  }
     
   const handleReset = async (e) => {
 
@@ -250,9 +281,11 @@ const Dashboard = () => {
     }
 
     if(user_config.aktualna_oferta){
+      await deleteJobsForUser(user_config);
       await getData(user_config);
     }
     else{
+      await deleteJobsForUser(user_config);
       await sendNotificationByCron(user_config);
     }
   }

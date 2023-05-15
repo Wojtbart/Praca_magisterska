@@ -13,5 +13,6 @@ router.post('/sms', smsDiscord.sendSmsToPhoneController);
 
 router.post('/getData', getDataFromScripts.getDataFromWebsite);
 router.post('/cronJob', cron.sendNotificationJob);
+router.post('/deleteJobsForUser', cron.deleteJobsForUser);
 
 module.exports = router;
