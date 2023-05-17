@@ -5,13 +5,13 @@ RUN mkdir -p /home/react/app/node_modules && chown -R node:node /home/react/app
 
 WORKDIR /home/react/app
 
-COPY --chown=node:node package*.json ./
+COPY --chown=node:node /frontend/my-test-app/package*.json ./
 
 USER node
 
 RUN npm install
 
-COPY --chown=node:node . .
+COPY --chown=node:node /frontend/my-test-app/ .
 
 ENV NODE_ENV production
 
