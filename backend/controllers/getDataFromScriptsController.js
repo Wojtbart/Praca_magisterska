@@ -2,6 +2,8 @@ const dataFromPlatformsService=require('../servicelayer/dataFromPlatforms_servic
 const { spawn } = require('child_process');
 
 let REGEX=/\d+/;
+let PYTHON='python3' //LINUX
+//let PYTHON='python3' //WINDOWS
 
 const getPepperData = (req,website) => {
 
@@ -17,7 +19,7 @@ const getPepperData = (req,website) => {
     
     if(website==='pepper'){
 
-        const python = spawn('python',arrOfArguments);
+        const python = spawn(PYTHON,arrOfArguments);
         
         return new Promise((resolveFunc) => {
 
@@ -63,7 +65,7 @@ const getOlxData = (req,website) => {
     
     if(website==='olx'){
 
-        const python = spawn('python',arrOfArguments);
+        const python = spawn(PYTHON,arrOfArguments);
         
         return new Promise((resolveFunc) => {
 
@@ -109,7 +111,7 @@ const getAllegroData = (req, website) => {
     
     if(website==='allegro'){
 
-        const python = spawn('python',arrOfArguments);
+        const python = spawn(PYTHON,arrOfArguments);
         
         return new Promise((resolveFunc) => {
 
@@ -155,7 +157,7 @@ const getAmazonData = (req, website) => {
     
     if(website==='amazon'){
 
-        const python = spawn('python',arrOfArguments);
+        const python = spawn(PYTHON,arrOfArguments);
         
         return new Promise((resolveFunc) => {
 

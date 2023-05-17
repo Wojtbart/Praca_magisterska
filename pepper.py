@@ -46,7 +46,7 @@ def get_data_and_insert(cnx,phrase):
     })
     page_content = BeautifulSoup(page.content, "html.parser")
 
-    not_found_result=page_content.findAll(text='''Spróbuj wyszukać coś innego. Możesz także ustawić alert dla danego słowa, poinformujemy Cię jeśli coś znajdziemy!''')
+    not_found_result=page_content.findAll(string='''Spróbuj wyszukać coś innego. Możesz także ustawić alert dla danego słowa, poinformujemy Cię jeśli coś znajdziemy!''')
 
     if not_found_result:
         print("Nic nie znaleziono")
@@ -59,46 +59,68 @@ def get_data_and_insert(cnx,phrase):
             for elem in html_tag.find_all("div", {"class": "threadGrid-title"}):
 
                 for a in elem.find_all("a", {"class":"thread-title--list"}):
-                    arr.append(a['title'])
-                    arr.append(a['href'])
+                    if a:
+                        arr.append(a['title'])
+                        arr.append(a['href'])
+                    else:
+                        arr.append(None)
+                        arr.append(None)
 
                 price_before=elem.find_all("span", {"class":"mute--text text--lineThrough size--all-l size--fromW3-xl"})
                 if( not price_before ):
                     arr.append(None)
                 else:
                     for span in price_before:
-                        arr.append(str(span.string))
+                        if span: 
+                            arr.append(str(span.string))
+                        else:
+                            arr.append(None)
 
                 reduction=elem.find_all("span", {"class":"space--ml-1 size--all-l size--fromW3-xl"})
                 if( not reduction):
                     arr.append(None)
                 else:
                     for span in reduction:
-                        arr.append(str(span.string))
+                        if span:   
+                            arr.append(str(span.string))
+                        else:
+                            arr.append(None)
 
                 original_price=elem.find_all("span", {"class":"thread-price"})
                 if( not original_price):
                     arr.append(None)
                 else:
                     for span in original_price:
-                        arr.append(str(span.string)) # cena oryginalna
+                        if span:
+                            arr.append(str(span.string)) # cena oryginalna
+                        else:
+                            arr.append(None)
 
                 delivery=elem.find_all("svg", {"class":"icon icon--truck"})
                 if( not delivery):
                     arr.append(None)
                 else:
                     for svg in delivery:
-                        arr.append(str(svg.find_next('span').contents[0].string.strip()))
+                        if svg.find_next('span').contents[0]:
+                            arr.append(str(svg.find_next('span').contents[0].string.strip()))
+                        else:
+                            arr.append(None)
                 
             for elem in html_tag.find_all("div", {"class": "threadGrid-image"}):
                 for span in elem.find_all("span", {"class":"thread-listImgCell"}):
                     for img in span.find_all("img"):
-                        arr.append(img['src'])
+                        if img:
+                            arr.append(img['src'])
+                        else:
+                            arr.append(None)
 
 
             for elem in html_tag.find_all("div", {"class":"threadGrid-body"}):
                 for div in elem.find("div", {"class":"userHtml userHtml-content"}):
-                    arr.append(str(div.string.strip()))
+                    if div.string:
+                        arr.append(str(div.string.strip()))
+                    else:
+                       arr.append(None) 
             
             for elem in html_tag.find_all("div", {"class":"threadGrid-footerMeta"}):
 
@@ -107,26 +129,49 @@ def get_data_and_insert(cnx,phrase):
 
                 for span in publisher_div:
                     publisher=span.find_next('span').contents[0]
-                    arr.append(str(publisher.strip()))
+                    if publisher:
+                        arr.append(str(publisher.strip()))
+                    else:
+                        arr.append(None)
 
                 for svg in comments:
                     comment=svg.find_next('span').contents[0]
-                    arr.append(str(comment.strip()))
+                    if comment:
+                        arr.append(str(comment.strip()))
+                    else:
+                        arr.append(None)
             
             for elem in html_tag.find_all("div", {"class":"threadGrid-headerMeta"}):
-                for div in elem.find_all("div", {"class":"vote-box"}):
-                    arr.append(str(div.find_next('span').contents[0].string.strip()))
+                if elem:
+                    for div in elem.find_all("div", {"class":"vote-box"}):
+                        if div.find_next('span').contents[0]:
+                            arr.append(str(div.find_next('span').contents[0].string.strip()))
+                        else:
+                            arr.append(None)
+                else:
+                    arr.append(None) 
 
                 promotion_go_on=elem.find_all("span", {"class":"cept-show-expired-threads"})
                 if( not promotion_go_on ):
                     arr.append(None)
                 else:
                     for span in promotion_go_on: 
-                        arr.append(str(span.string))
+                        if span:
+                            arr.append(str(span.string))
+                        else:
+                            arr.append(None)
 
-                for svg in elem.find_all("svg", {"class":"icon--clock"}):
-                    arr.append(str(svg.find_next('span').contents[0].string.strip()))
-
+                if elem.find_all("svg", {"class":"icon--clock"}):
+                    for svg in elem.find_all("svg", {"class":"icon--clock"}):
+                        if svg:
+                            if svg.find_next('span').contents[0]:
+                                arr.append(str(svg.find_next('span').contents[0].string.strip()))
+                            else:
+                                arr.append(None)
+                        else:
+                            arr.append(None)
+                else:
+                    arr.append(None)
             insert_record(cnx,arr)
 
 if __name__ == "__main__":

@@ -24,6 +24,7 @@
     "node-html-to-image": "^3.3.0",
     "node-mailer": "^0.1.1",
     "pug": "^3.0.2",
+    "sequelize": "^6.31.1",
     "twilio": "^4.8.0"
   }
 }

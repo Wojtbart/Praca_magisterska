@@ -2,7 +2,8 @@ from configparser import ConfigParser
 import os
 
 # tutaj sciezke muszę podawać na sztywno
-path=os.path.dirname(os.path.abspath(__file__))+'\config.ini'
+# path=os.path.dirname(os.path.abspath(__file__))+'\config.ini' #WINDOWS
+path=os.path.dirname(os.path.abspath(__file__))+'/config.ini' #LINUX
 
 def read_db_config(filename=path, section='mysql'):
 
