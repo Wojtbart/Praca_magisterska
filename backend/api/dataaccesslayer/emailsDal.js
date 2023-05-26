@@ -48,7 +48,7 @@ const sendMail = async (req)=>{
             return a === b;
         });
         
-        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../templates/template.hbs"), "utf8");
+        const emailTemplateSource = fs.readFileSync(path.join(__dirname, "../../templates/template.hbs"), "utf8");
 
         const tableTemplate = handlebars.compile(emailTemplateSource);
         

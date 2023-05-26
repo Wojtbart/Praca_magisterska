@@ -42,7 +42,7 @@ def get_data_and_insert(cnx,phrase):
     })
     page_content = BeautifulSoup(page.content, "html.parser")
 
-    not_found_result=page_content.findAll(text='''Znaleźliśmy  0 ogłoszeń''')
+    not_found_result=page_content.findAll(string='''Znaleźliśmy  0 ogłoszeń''')
 
     if not_found_result:
         print("Nic nie znaleziono")

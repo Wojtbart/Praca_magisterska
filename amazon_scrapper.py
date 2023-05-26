@@ -46,7 +46,7 @@ def get_data_and_insert(cnx,phrase):
     })
     page_content = BeautifulSoup(page.content, "html.parser")
 
-    not_found_result=page_content.findAll(text='Spróbuj wpisać mniej lub użyć poniższych słów kluczowych')
+    not_found_result=page_content.findAll(string='Spróbuj wpisać mniej lub użyć poniższych słów kluczowych')
 
     if not_found_result:
         print("Nic nie znaleziono")

@@ -9,7 +9,8 @@ urllib3.disable_warnings()
 import os
 
 # tutaj sciezke muszę podawać na sztywno
-path=os.path.dirname(os.path.abspath(__file__))+'\config.ini'
+# path=os.path.dirname(os.path.abspath(__file__))+'\config.ini' #WINDOWS
+path=os.path.dirname(os.path.abspath(__file__))+'/config.ini' #LINUX
 
 config = configparser.ConfigParser()
 config.read(path)
@@ -95,7 +96,7 @@ def find_offers(token,phrase,limit):
 
                 cnx = MySQLConnection(**db_config)
                 if (cnx.is_connected()):
-                    print('Utworzono połączenie z bazą danych')
+                    print('Utworzono polaczenie z baza danych')
                 else:
                     print('Połączenie nie powiodło się')
 
@@ -109,7 +110,7 @@ def find_offers(token,phrase,limit):
             finally:
                 if (cnx is not None and cnx.is_connected()):
                     cnx.close()
-                    print("Połączenie MySQL zostało zakończone")
+                    print("Polaczenie MySQL zostalo zakonczone")
 
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)   

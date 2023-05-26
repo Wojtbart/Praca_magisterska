@@ -2,8 +2,8 @@ const dataFromPlatformsService=require('../servicelayer/dataFromPlatforms_servic
 const { spawn } = require('child_process');
 
 let REGEX=/\d+/;
-let PYTHON='python3' //LINUX
-//let PYTHON='python3' //WINDOWS
+// let PYTHON='python3' //LINUX
+let PYTHON='python' //WINDOWS
 
 const getPepperData = (req,website) => {
 

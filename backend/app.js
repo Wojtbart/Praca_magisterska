@@ -3,8 +3,8 @@ const process = require("process");
 const path = require('path');
 const cors = require('cors');
 
-var notificationServices = require('./routes/notificationServices');
-var users = require('./routes/users');
+var notificationServices = require('./api/routes/notificationServices');
+var users = require('./api/routes/users');
 
 const PORT=process.env.PORT || 9005;
 
