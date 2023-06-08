@@ -2,8 +2,17 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Praca-magisterska - MIKROSERWISOWA PLATFORMA POWIADOMIEŃ o OFERTACH sprzedażowych  ",
+  "main": "app.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose":false,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "author": "Wojciech Sękowski",
   "license": "ISC",
@@ -14,6 +23,7 @@
     "discord.js": "^14.9.0",
     "express": "^4.18.2",
     "handlebars": "^4.7.7",
+    "iconv-lite": "^0.6.3",
     "ini": "^3.0.1",
     "ini-parser": "^0.0.2",
     "messagebird": "^4.0.1",
@@ -25,6 +35,11 @@
     "node-mailer": "^0.1.1",
     "pug": "^3.0.2",
     "sequelize": "^6.31.1",
+    "supertest": "^6.3.3",
+    "tedious": "^16.1.0",
     "twilio": "^4.8.0"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }

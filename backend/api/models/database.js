@@ -9,12 +9,13 @@ const sequelize = new Sequelize(
   config.mysql.password,
   {
     host: config.mysql.host,
+    // host: 'localhost',
     dialect: config.mysql_dialect.dialect,
     dialectModule: require('mysql2'),
-    operationsAliases: false,
+    operationsAliases: false
   }
 );
- 
+
 sequelize.authenticate().then(() => {
   console.log('Nawiązano pomyślnie  połączenie do bazy MySQL.');
 }).catch((error) => {

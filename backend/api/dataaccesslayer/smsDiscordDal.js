@@ -157,7 +157,7 @@ const sendToDiscord= async (req, res) => {
     }
   }
 
-  const channel = client.channels.cache.get(config.discord.friendsChannelId);
+  const channel = client.channels.cache.get(config.discord.channelId);
   let arrayOfEmbeds=[];
   if (pepperEmbed.data.hasOwnProperty('fields')) arrayOfEmbeds.push(pepperEmbed);
   if (amazonEmbed.data.hasOwnProperty('fields')) arrayOfEmbeds.push(amazonEmbed);
