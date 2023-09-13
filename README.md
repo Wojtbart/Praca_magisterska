@@ -1,3 +1,5 @@
+#Praca magisterska - Mikroserwisowa platformapowiadomień o ofertach sprzedażowych
+
 **I. Cel pracy:**
 
 Celem pracy jest przedstawienie problematyki mechanizmów wysyłających
