@@ -1,4 +1,4 @@
-#Praca magisterska - Mikroserwisowa platformapowiadomień o ofertach sprzedażowych
+# Praca magisterska - Mikroserwisowa platformapowiadomień o ofertach sprzedażowych
 
 **I. Cel pracy:**
 
