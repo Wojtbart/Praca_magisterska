@@ -1,4 +1,4 @@
-# Praca magisterska - Mikroserwisowa platformapowiadomień o ofertach sprzedażowych
+# Praca magisterska - Mikroserwisowa platforma powiadomień o ofertach sprzedażowych
 
 **I. Cel pracy:**
 
@@ -123,3 +123,5 @@ strony oraz poprawienia wyglądu graficznego strony
 
 **Docker** -- środowisko kontenerowe, w której przechowywane są osobno:
 baza danych, aplikacja kliencka oraz aplikacja serwerowa.
+
+PDF z opisem pracy w repozytorium
